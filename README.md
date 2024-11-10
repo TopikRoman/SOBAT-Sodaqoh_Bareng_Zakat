@@ -1,1 +1,0 @@
-# SOBAT-Sodaqoh_Bareng_Zakat
