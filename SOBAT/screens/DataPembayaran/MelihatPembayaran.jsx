@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -11,110 +11,150 @@ import { getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
+const membacaDataDalamFirebase = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "pembayaranZakat"));
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      tanggal: new Date(doc.data().tanggal).toLocaleDateString("id-ID"),
+    }));
+  } catch (error) {
+    console.error("Error fetching documents: ", error);
+    return [];
+  }
+};
+
+const hapusDataPembayaran = async (id) => {
+  try {
+    await deleteDoc(doc(db, "pembayaranZakat", id));
+    return true;
+  } catch (error) {
+    console.error("Error deleting document: ", error);
+    return false;
+  }
+};
+
+const handleDelete = async (
+  selectedItem,
+  setDataPembayaran,
+  setSelectedItem
+) => {
+  Alert.alert(
+    "Konfirmasi Hapus",
+    "Apakah Anda yakin ingin menghapus data pembayaran ini?",
+    [
+      {
+        text: "Batal",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Hapus",
+        onPress: async () => {
+          const berhasil = await hapusDataPembayaran(selectedItem.id);
+          if (berhasil) {
+            setDataPembayaran((prevData) =>
+              prevData.filter((item) => item.id !== selectedItem.id)
+            );
+            setSelectedItem(null);
+            Alert.alert("Berhasil", "Data pembayaran telah dihapus.");
+          } else {
+            Alert.alert("Error", "Gagal menghapus data pembayaran.");
+          }
+        },
+      },
+    ]
+  );
+};
 const MelihatPembayaran = () => {
   const [dataPembayaran, setDataPembayaran] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
 
+  const fetchData = useCallback(async () => {
+    const pembayaranData = await membacaDataDalamFirebase();
+    setDataPembayaran(pembayaranData);
+  }, []);
+
+  const updateHeaderButtons = useCallback(() => {
+    if (selectedItem) {
+      navigation.setOptions({
+        headerRight: () => (
+          <>
+            <TouchableOpacity
+              onPress={() =>
+                handleDelete(selectedItem, setDataPembayaran, setSelectedItem)
+              }
+            >
+              <Text style={styles.headerButton}>Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleEdit(selectedItem)}>
+              <Text style={styles.headerButton}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSelectedItem(null)}>
+              <Text style={styles.headerButton}>Batal</Text>
+            </TouchableOpacity>
+          </>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: null });
+    }
+  }, [navigation, selectedItem]);
+
   useFocusEffect(
     useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const querySnapshot = await getDocs(
-            collection(db, "pembayaranZakat")
-          );
-          const pembayaranData = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setDataPembayaran(pembayaranData);
-        } catch (error) {
-          console.error("Error fetching documents: ", error);
-        }
-      };
-
       fetchData();
-
-      if (selectedItem) {
-        navigation.setOptions({
-          headerRight: () => (
-            <>
-              <TouchableOpacity onPress={handleDelete}>
-                <Text style={styles.headerButton}>Delete</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleEdit}>
-                <Text style={styles.headerButton}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={unselectedData}>
-                <Text style={styles.headerButton}>Batal</Text>
-              </TouchableOpacity>
-            </>
-          ),
-        });
-      } else {
-        navigation.setOptions({
-          headerRight: null,
-        });
-      }
-    }, [navigation, selectedItem])
+      updateHeaderButtons();
+    }, [fetchData, updateHeaderButtons])
   );
 
-  const unselectedData = () => {
-    setSelectedItem(null);
-  };
+  const handlePress = useCallback(
+    (item) => {
+      navigation.navigate("DetailPembayaran", { pembayaran: item });
+    },
+    [navigation]
+  );
 
-  const handlePress = (item) => {
-    navigation.navigate("DetailPembayaran", { pembayaran: item });
-  };
-
-  const handleLongPress = (item) => {
+  const handleLongPress = useCallback((item) => {
     setSelectedItem(item);
-  };
+  }, []);
 
-  const handleDelete = () => {
-    if (!selectedItem) return;
-
-    deleteDoc(doc(db, "pembayaranZakat", selectedItem.id))
-      .then(() => {
-        setDataPembayaran(
-          dataPembayaran.filter((item) => item.id !== selectedItem.id)
-        );
+  const handleEdit = useCallback(
+    (selectedItem) => {
+      if (selectedItem) {
+        navigation.navigate("EditDataPembayaran", { pembayaran: selectedItem });
         setSelectedItem(null);
-        Alert.alert("Berhasil", "Data pembayaran telah dihapus.");
-      })
-      .catch((error) => {
-        console.error("Error deleting document: ", error);
-        Alert.alert("Error", "Gagal menghapus data pembayaran.");
-      });
-  };
-
-  const handleEdit = () => {
-    if (selectedItem) {
-      navigation.navigate("EditDataPembayaran", { pembayaran: selectedItem });
-      unselectedData();
-    }
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={[
-        styles.item,
-        selectedItem && selectedItem.id === item.id
-          ? styles.selectedItem
-          : null,
-      ]}
-      onPress={() => handlePress(item)}
-      onLongPress={() => handleLongPress(item)}
-    >
-      <Text style={styles.itemText}>
-        {item.nama} - {item.jenisZakat}
-      </Text>
-    </TouchableOpacity>
+      }
+    },
+    [navigation]
   );
 
-  const handleAddItem = () => {
-    navigation.navigate("TambahPembayaran");
-  };
+  const handleAddItem = useCallback(
+    () => navigation.navigate("TambahPembayaran"),
+    [navigation]
+  );
+
+  const renderItem = useCallback(
+    ({ item }) => (
+      <TouchableOpacity
+        style={[
+          styles.item,
+          selectedItem && selectedItem.id === item.id
+            ? styles.selectedItem
+            : null,
+        ]}
+        onPress={() => handlePress(item)}
+        onLongPress={() => handleLongPress(item)}
+      >
+        <Text style={styles.itemText}>
+          {item.nama} - {item.jenisZakat} - {item.tanggal}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [selectedItem, handlePress, handleLongPress]
+  );
 
   return (
     <View style={styles.container}>

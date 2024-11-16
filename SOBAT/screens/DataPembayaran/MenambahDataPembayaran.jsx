@@ -11,33 +11,113 @@ import { Picker } from "@react-native-picker/picker";
 import { db } from "../../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 
-export default function TambahPembayaran() {
-  const [nama, setNama] = useState("");
-  const [alamat, setAlamat] = useState("");
-  const [telepon, setTelepon] = useState("");
-  const [atasNama, setAtasNama] = useState("");
-  const [jenisZakat, setJenisZakat] = useState("fitrah");
-  const [bentukZakat, setBentukZakat] = useState("beras");
-  const [banyakZakat, setBanyakZakat] = useState("");
+const simpanDataKeFirestore = async (newData) => {
+  try {
+    await addDoc(collection(db, "pembayaranZakat"), newData);
+    return {
+      success: true,
+      message: "Data pembayaran zakat berhasil disimpan",
+    };
+  } catch (error) {
+    console.error("Error menambahkan data ke Firestore: ", error);
+    return { success: false, message: "Terjadi kesalahan saat menyimpan data" };
+  }
+};
 
-  // Fungsi untuk mengirim data ke Firebase Firestore
+const periksaInput = (data) => {
+  return (
+    data.nama &&
+    data.alamat &&
+    data.telepon &&
+    data.atasNama &&
+    data.jenisZakat &&
+    data.bentukZakat &&
+    data.banyakZakat
+  );
+};
+
+const useFormState = (initialState) => {
+  const [formData, setFormData] = useState(initialState);
+
+  const handleInputChange = (name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const resetForm = () => setFormData(initialState);
+
+  return { formData, handleInputChange, resetForm };
+};
+
+const buatDataPembayaran = (data) => ({
+  ...data,
+  tanggal: new Date().toISOString(),
+});
+
+const menyimpanDatadiFirestore = async (data) => {
+  if (!periksaInput(data)) {
+    return {
+      success: false,
+      message:
+        "Semua kolom harus diisi! Pastikan nama, jenis zakat, dan nominal tidak kosong.",
+    };
+  }
+
+  const newData = buatDataPembayaran(data);
+  return await simpanDataKeFirestore(newData);
+};
+
+const InputField = ({
+  placeholder,
+  value,
+  onChangeText,
+  keyboardType = "default",
+}) => (
+  <TextInput
+    style={styles.input}
+    placeholder={placeholder}
+    value={value}
+    keyboardType={keyboardType}
+    onChangeText={onChangeText}
+  />
+);
+
+const PickerField = ({ label, selectedValue, onValueChange, items }) => (
+  <>
+    <Text style={styles.label}>{label}</Text>
+    <View style={styles.pickerContainer}>
+      <Picker
+        selectedValue={selectedValue}
+        style={styles.picker}
+        onValueChange={onValueChange}
+      >
+        {items.map(({ label, value }) => (
+          <Picker.Item key={value} label={label} value={value} />
+        ))}
+      </Picker>
+    </View>
+  </>
+);
+
+const TambahPembayaran = () => {
+  const { formData, handleInputChange, resetForm } = useFormState({
+    nama: "",
+    alamat: "",
+    telepon: "",
+    atasNama: "",
+    jenisZakat: "fitrah",
+    bentukZakat: "beras",
+    banyakZakat: "",
+  });
+
   const handleSubmit = async () => {
-    try {
-      // Menambahkan data ke Firestore
-      await addDoc(collection(db, "pembayaranZakat"), {
-        nama,
-        alamat,
-        telepon,
-        atasNama,
-        jenisZakat,
-        bentukZakat,
-        banyakZakat,
-      });
+    const result = await menyimpanDatadiFirestore(formData);
+    alert(result.message);
 
-      alert("Data pembayaran zakat berhasil disimpan");
-    } catch (error) {
-      console.error("Error menambahkan data ke Firestore: ", error);
-      alert("Terjadi kesalahan saat menyimpan data");
+    if (result.success) {
+      resetForm();
     }
   };
 
@@ -46,66 +126,57 @@ export default function TambahPembayaran() {
       <View style={styles.container}>
         <Text style={styles.title}>Form Pembayaran Zakat</Text>
 
-        <TextInput
-          style={styles.input}
+        <InputField
           placeholder="Nama"
-          value={nama}
-          onChangeText={setNama}
+          value={formData.nama}
+          onChangeText={(value) => handleInputChange("nama", value)}
         />
 
-        <TextInput
-          style={styles.input}
+        <InputField
           placeholder="Alamat"
-          value={alamat}
-          onChangeText={setAlamat}
+          value={formData.alamat}
+          onChangeText={(value) => handleInputChange("alamat", value)}
         />
 
-        <TextInput
-          style={styles.input}
+        <InputField
           placeholder="Nomor Telepon"
           keyboardType="phone-pad"
-          value={telepon}
-          onChangeText={setTelepon}
+          value={formData.telepon}
+          onChangeText={(value) => handleInputChange("telepon", value)}
         />
 
-        <TextInput
-          style={styles.input}
+        <InputField
           placeholder="Zakat Atas Nama"
-          value={atasNama}
-          onChangeText={setAtasNama}
+          value={formData.atasNama}
+          onChangeText={(value) => handleInputChange("atasNama", value)}
         />
 
-        <Text style={styles.label}>Jenis Zakat</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={jenisZakat}
-            style={styles.picker}
-            onValueChange={(itemValue) => setJenisZakat(itemValue)}
-          >
-            <Picker.Item label="Zakat Fitrah" value="fitrah" />
-            <Picker.Item label="Zakat Mal" value="mal" />
-          </Picker>
-        </View>
+        <PickerField
+          label="Jenis Zakat"
+          selectedValue={formData.jenisZakat}
+          onValueChange={(value) => handleInputChange("jenisZakat", value)}
+          items={[
+            { label: "Zakat Fitrah", value: "fitrah" },
+            { label: "Zakat Mal", value: "mal" },
+          ]}
+        />
 
-        <Text style={styles.label}>Bentuk Zakat</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={bentukZakat}
-            style={styles.picker}
-            onValueChange={(itemValue) => setBentukZakat(itemValue)}
-          >
-            <Picker.Item label="Beras" value="beras" />
-            <Picker.Item label="Uang" value="uang" />
-            <Picker.Item label="Emas" value="emas" />
-          </Picker>
-        </View>
+        <PickerField
+          label="Bentuk Zakat"
+          selectedValue={formData.bentukZakat}
+          onValueChange={(value) => handleInputChange("bentukZakat", value)}
+          items={[
+            { label: "Beras", value: "beras" },
+            { label: "Uang", value: "uang" },
+            { label: "Emas", value: "emas" },
+          ]}
+        />
 
-        <TextInput
-          style={styles.input}
+        <InputField
           placeholder="Banyaknya Zakat"
           keyboardType="numeric"
-          value={banyakZakat}
-          onChangeText={setBanyakZakat}
+          value={formData.banyakZakat}
+          onChangeText={(value) => handleInputChange("banyakZakat", value)}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -114,7 +185,7 @@ export default function TambahPembayaran() {
       </View>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -164,3 +235,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default TambahPembayaran;
