@@ -8,6 +8,10 @@ import TambahPembayaran from "./screens/DataPembayaran/MenambahDataPembayaran";
 import MelihatPembayaran from "./screens/DataPembayaran/MelihatPembayaran";
 import DetailPembayaran from "./screens/DataPembayaran/DetailPembayaran";
 import EditDataPembayaran from "./screens/DataPembayaran/EditDataPembayaran";
+import DataMustahik from "./screens/DataMustahik/DataMustahik";
+import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
+import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
+import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,11 +31,18 @@ export default function App() {
         />
         <Stack.Screen name="TambahPembayaran" component={TambahPembayaran} />
         <Stack.Screen name="DetailPembayaran" component={DetailPembayaran} />
+        <Stack.Screen name="DataMustahik" component={DataMustahik} />
+        <Stack.Screen name="TambahDataMustahik" component={TambahMustahik} />
+        <Stack.Screen name="DetailDataMustahik" component={DetailMustahik} />
+        <Stack.Screen name="EditDataMustahik" component={EditDataMustahik} />
         <Stack.Screen
           name="EditDataPembayaran"
           component={EditDataPembayaran}
         />
-        <Stack.Screen name="MelihatPembayaran" component={MelihatPembayaran} />
+        <Stack.Screen
+          name="DataPembayaranZakat"
+          component={MelihatPembayaran}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

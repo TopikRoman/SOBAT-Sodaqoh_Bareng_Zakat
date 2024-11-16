@@ -15,9 +15,16 @@ export default function MainMenu({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("MelihatPembayaran")}
+        onPress={() => navigation.navigate("DataPembayaranZakat")}
       >
         <Text style={styles.buttonText}>Data Pembayaran Zakat</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("DataMustahik")}
+      >
+        <Text style={styles.buttonText}>Data Mustahik</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
