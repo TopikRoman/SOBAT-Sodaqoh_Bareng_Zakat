@@ -12,6 +12,10 @@ import DataMustahik from "./screens/DataMustahik/DataMustahik";
 import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
 import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
 import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
+import DaftarAmil from "./screens/DaftarAkun/DaftarAmil";
+import DaftarMuzakki from "./screens/DaftarAkun/DaftarMuzakki";
+import LoginAmil from "./screens/SeparateLogin/LoginAmil";
+import LoginMuzakki from "./screens/SeparateLogin/LoginMuzakki";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +39,10 @@ export default function App() {
         <Stack.Screen name="TambahDataMustahik" component={TambahMustahik} />
         <Stack.Screen name="DetailDataMustahik" component={DetailMustahik} />
         <Stack.Screen name="EditDataMustahik" component={EditDataMustahik} />
+        <Stack.Screen name="DaftarAmil" component={DaftarAmil} options={{ headerShown: false }}/>
+        <Stack.Screen name="DaftarMuzakki" component={DaftarMuzakki} options={{ headerShown: false }} />
+        <Stack.Screen name="LoginAmil" component={LoginAmil} options={{ headerShown: false }}/>
+        <Stack.Screen name="LoginMuzakki" component={LoginMuzakki} options={{ headerShown: false }}/>
         <Stack.Screen
           name="EditDataPembayaran"
           component={EditDataPembayaran}
