@@ -12,8 +12,8 @@ import DataMustahik from "./screens/DataMustahik/DataMustahik";
 import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
 import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
 import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
-import MainMenuAmil from "./screens/ScreenAmil/MainMenu";
-import TransaksiZakatMuzakki from "./screens/ScreenAmil/TransaksiZakat";
+import MainMenuAmil from "./screens/ScreenMuzakki/MainMenu";
+import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 
 const Stack = createNativeStackNavigator();
 
