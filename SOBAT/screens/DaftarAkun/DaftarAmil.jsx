@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"; // Impor Firebase Authentication
-import { auth } from '../../firebase/FirebaseConfig'; // Impor konfigurasi Firebase
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"; 
+import { auth } from '../../firebase/FirebaseConfig'; 
 
 const DaftarMuzakki = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -14,10 +14,8 @@ const DaftarMuzakki = ({ navigation }) => {
         }
 
         try {
-            // Membuat akun menggunakan email dan password
             await createUserWithEmailAndPassword(auth, email, password);
 
-            // Setelah berhasil daftar, navigasi ke halaman login Muzakki
             Alert.alert("Sukses!", "Akun berhasil dibuat.");
             navigation.navigate('LoginMuzakki');
         } catch (error) {
