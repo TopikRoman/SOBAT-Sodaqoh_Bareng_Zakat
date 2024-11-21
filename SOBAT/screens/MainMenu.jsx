@@ -6,6 +6,13 @@ export default function MainMenu({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Dashboard Amil Zakat</Text>
 
+      {/* <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("TambahPembayaran")}
+      >
+        <Text style={styles.buttonText}>Menambah Pembayaran Zakat</Text>
+      </TouchableOpacity> */}
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("DataPembayaranZakat")}
