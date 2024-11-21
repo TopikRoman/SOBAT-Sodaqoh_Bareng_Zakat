@@ -12,12 +12,6 @@ const LoginScreen = ({ navigation }) => {
       >
         <Text>Masuk Sebagai Amil </Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MainMenuAmil")}
-      >
-        <Text>Masuk Sebagai Muzakki </Text>
-      </TouchableOpacity>
     </View>
   );
 };

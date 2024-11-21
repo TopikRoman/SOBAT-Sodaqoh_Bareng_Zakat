@@ -12,8 +12,6 @@ import DataMustahik from "./screens/DataMustahik/DataMustahik";
 import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
 import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
 import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
-import MainMenuAmil from "./screens/ScreenAmil/MainMenu";
-import TransaksiZakatMuzakki from "./screens/ScreenAmil/TransaksiZakat";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,15 +19,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="MainMenuAmil"
-          component={MainMenuAmil}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="TransaksiZakatMuzakki"
-          component={TransaksiZakatMuzakki}
-        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
