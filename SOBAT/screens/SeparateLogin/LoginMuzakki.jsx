@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; 
-import { auth } from '../../firebase/FirebaseConfig'; 
+import { auth } from '../../firebase/FirebaseConfig' 
 
 const LoginMuzakki = ({ navigation }) => {
     const [email, setEmail] = useState('');
