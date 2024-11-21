@@ -1,25 +1,25 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function MainMenu({ navigation }) {
+export default function MainMenuAmil({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dashboard Amil Zakat</Text>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("DataPembayaranZakat")}
+        onPress={() => navigation.navigate("TransaksiZakatMuzakki")}
       >
-        <Text style={styles.buttonText}>Data Pembayaran Zakat</Text>
+        <Text style={styles.buttonText}>Pembayaran Zakat</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("DataMustahik")}
+        onPress={() => navigation.navigate("")}
       >
-        <Text style={styles.buttonText}>Data Mustahik</Text>
+        <Text style={styles.buttonText}>Data Transaksi</Text>
       </TouchableOpacity>
-
+      {/* 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("KonfirmasiPembayaran")}
@@ -32,7 +32,7 @@ export default function MainMenu({ navigation }) {
         onPress={() => navigation.navigate("PembagianZakat")}
       >
         <Text style={styles.buttonText}>Pembagian Zakat</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TouchableOpacity
         style={styles.buttonExit}
