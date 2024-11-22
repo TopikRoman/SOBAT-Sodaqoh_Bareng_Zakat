@@ -12,6 +12,8 @@ import DataMustahik from "./screens/DataMustahik/DataMustahik";
 import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
 import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
 import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
+import MainMenuAmil from "./screens/ScreenMuzakki/MainMenu";
+import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 import DaftarAmil from "./screens/DaftarAkun/DaftarAmil";
 import DaftarMuzakki from "./screens/DaftarAkun/DaftarMuzakki";
 import LoginAmil from "./screens/SeparateLogin/LoginAmil";
