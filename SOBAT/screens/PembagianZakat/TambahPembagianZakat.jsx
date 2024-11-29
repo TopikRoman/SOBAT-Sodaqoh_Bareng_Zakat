@@ -9,21 +9,8 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
-
-const useAmilUid = () => {
-  const auth = getAuth();
-  const [amilUid, setAmilUid] = useState("");
-
-  useEffect(() => {
-    const currentUser = auth.currentUser;
-    if (currentUser) setAmilUid(currentUser.uid);
-  }, [auth]);
-
-  return amilUid;
-};
 
 const useMustahikList = () => {
   const [mustahikList, setMustahikList] = useState([]);
@@ -51,16 +38,9 @@ const useMustahikList = () => {
   return mustahikList;
 };
 
-const tambahPembagianZakat = async (
-  amilUid,
-  mustahik,
-  nominal,
-  bentukZakat,
-  db
-) => {
+const tambahPembagianZakat = async (mustahik, nominal, bentukZakat, db) => {
   const pembagianZakatRef = collection(db, "pembagianZakat");
   await addDoc(pembagianZakatRef, {
-    amilUid,
     mustahik,
     nominal: parseInt(nominal),
     bentukZakat,
@@ -99,9 +79,7 @@ const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   </>
 );
 
-const TambahPembagianZakat = ({ route }) => {
-  const { userEmail } = route.params;
-  const amilUid = useAmilUid();
+const TambahPembagianZakat = () => {
   const mustahikList = useMustahikList();
   const db = getFirestore();
 
@@ -122,7 +100,6 @@ const TambahPembagianZakat = ({ route }) => {
     }
 
     tambahPembagianZakat(
-      amilUid,
       selectedMustahikData,
       formData.nominal,
       formData.bentukZakat,
@@ -135,7 +112,7 @@ const TambahPembagianZakat = ({ route }) => {
       .catch(() => {
         Alert.alert("Error", "Gagal menambahkan data pembagian zakat.");
       });
-  }, [amilUid, formData, mustahikList, db, resetForm]);
+  }, [formData, mustahikList, db, resetForm]);
 
   const pickerItemsMustahik = useMemo(
     () => [
