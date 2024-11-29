@@ -5,13 +5,13 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Alert,
   Image,
 } from "react-native";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-// Fungsi untuk membaca data dari Firebase (data pembagian zakat)
 const membacaDataPembagianZakat = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "pembagianZakat"));
@@ -19,7 +19,6 @@ const membacaDataPembagianZakat = async () => {
       id: doc.id,
       ...doc.data(),
       tanggal: new Date(doc.data().tanggal).toLocaleDateString("id-ID"),
-      // Pastikan data yang diambil ada untuk 'nama mustahik' dan 'bentuk zakat'
     }));
   } catch (error) {
     console.error("Error fetching documents: ", error);
@@ -27,22 +26,58 @@ const membacaDataPembagianZakat = async () => {
   }
 };
 
+const hapusDataPembagian = async (id) => {
+  try {
+    await deleteDoc(doc(db, "pembagianZakat", id));
+    return true;
+  } catch (error) {
+    console.error("Error deleting document: ", error);
+    return false;
+  }
+};
+
 const DataPembagianZakat = () => {
   const [dataPembagianZakat, setDataPembagianZakat] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
 
-  // Fetch data saat fokus
+  // Fetch data saat layar difokuskan
   const fetchData = useCallback(async () => {
     const pembagianZakatData = await membacaDataPembagianZakat();
     setDataPembagianZakat(pembagianZakatData);
   }, []);
 
-  // Menjalankan fetch data saat layar difokuskan
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [fetchData])
   );
+
+  // Fungsi untuk menghapus data
+  const handleDelete = useCallback(async (item) => {
+    Alert.alert(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data pembagian ini?",
+      [
+        { text: "Batal", onPress: () => {}, style: "cancel" },
+        {
+          text: "Hapus",
+          onPress: async () => {
+            const berhasil = await hapusDataPembagian(item.id);
+            if (berhasil) {
+              setDataPembagianZakat((prevData) =>
+                prevData.filter((data) => data.id !== item.id)
+              );
+              setSelectedItem(null);
+              Alert.alert("Berhasil", "Data berhasil dihapus.");
+            } else {
+              Alert.alert("Error", "Gagal menghapus data.");
+            }
+          },
+        },
+      ]
+    );
+  }, []);
 
   // Fungsi untuk menavigasi ke halaman detail pembagian zakat
   const handlePress = useCallback(
@@ -51,23 +86,47 @@ const DataPembagianZakat = () => {
     },
     [navigation]
   );
-  const handleAddItem = useCallback(
-    (item) => {
-      navigation.navigate("TambahPembagianZakat", { pembagianZakat: item });
-    },
-    [navigation]
-  );
 
-  // Render item dalam FlatList
+  const handleLongPress = useCallback((item) => {
+    setSelectedItem(item);
+  }, []);
+
   const renderItem = useCallback(
     ({ item }) => (
-      <TouchableOpacity style={styles.item} onPress={() => handlePress(item)}>
+      <TouchableOpacity
+        style={[
+          styles.item,
+          selectedItem && selectedItem.id === item.id
+            ? styles.selectedItem
+            : null,
+        ]}
+        onPress={() =>
+          selectedItem ? setSelectedItem(null) : handlePress(item)
+        }
+        onLongPress={() => handleLongPress(item)}
+      >
         <Text style={styles.itemText}>
           {item.mustahik.nama} - {item.bentukZakat} - {item.tanggal}
         </Text>
+        {selectedItem && selectedItem.id === item.id && (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDelete(item)}
+            >
+              <Text style={styles.deleteButtonText}>Hapus</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Text style={styles.cancelButtonText}>Batal</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </TouchableOpacity>
     ),
-    [handlePress]
+    [selectedItem, handlePress, handleLongPress, handleDelete]
   );
 
   return (
@@ -75,14 +134,15 @@ const DataPembagianZakat = () => {
       <View style={styles.headerContainer}>
         <View style={styles.leftColumn}>
           <Text style={styles.header}>Data Penyaluran</Text>
-          <TouchableOpacity style={styles.addButton}>
-            <Text style={styles.addButtonText} onPress={handleAddItem}>
-              Tambah Data Baru
-            </Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate("TambahPembagianZakat")}
+          >
+            <Text style={styles.addButtonText}>Tambah Data Baru</Text>
           </TouchableOpacity>
         </View>
         <Image
-          source={require("../../assets/orangNgaji.png")} // Ganti dengan path gambar kamu
+          source={require("../../assets/orangNgaji.png")}
           style={styles.illustration}
         />
       </View>
@@ -96,41 +156,6 @@ const DataPembagianZakat = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  item: {
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  tombolTambah: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    backgroundColor: "#4CAF50",
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
-  },
-  itemText: {
-    fontSize: 18,
-  },
-
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -170,55 +195,44 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: "contain",
   },
-  list: {
-    paddingBottom: 20,
+  item: {
+    padding: 15,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
-  card: {
+  selectedItem: {
+    backgroundColor: "#D3E4CD",
+  },
+  itemText: {
+    fontSize: 18,
+  },
+  actionButtons: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    overflow: "hidden",
+    marginTop: 10,
+    justifyContent: "space-between",
   },
-  sideBar: {
-    width: 6,
-    backgroundColor: "#A5D6A7",
+  deleteButton: {
+    backgroundColor: "red",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
   },
-  cardContent: {
-    flex: 1,
-    padding: 16,
-  },
-  cardTitle: {
-    fontSize: 16,
+  deleteButtonText: {
+    color: "#fff",
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 4,
   },
-  cardSubtitle: {
-    fontSize: 14,
-    color: "#666",
+  cancelButton: {
+    backgroundColor: "gray",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
   },
-  cardDetails: {
-    alignItems: "center",
-    padding: 16,
-    borderLeftWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  cardZakat: {
-    fontSize: 14,
+  cancelButtonText: {
+    color: "#fff",
     fontWeight: "bold",
-    color: "#4CAF50",
-    marginBottom: 4,
-  },
-  cardJumlah: {
-    fontSize: 14,
-    color: "#333",
   },
 });
 
