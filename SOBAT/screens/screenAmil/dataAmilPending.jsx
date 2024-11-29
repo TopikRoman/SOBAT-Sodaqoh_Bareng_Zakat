@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  Alert,
+  Modal,
 } from "react-native";
 import {
   getDocs,
@@ -17,8 +17,8 @@ import {
 import { db } from "../../firebase/FirebaseConfig";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
-// **Utilitas Firebase**
 const fetchPendingAccounts = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "pendingAccounts"));
@@ -66,89 +66,24 @@ const approvePendingAccount = async (account) => {
   }
 };
 
-// **Fungsi Approve, Delete, dan Update State**
-const approveDataAmil = async (item, setDataAmilPending, setSelectedItem) => {
-  const result = await approvePendingAccount(item);
-  if (result.success) {
-    setDataAmilPending((prevData) =>
-      prevData.filter((amil) => amil.id !== result.accountId)
-    );
-    setSelectedItem(null);
-    Alert.alert("Berhasil", "Data amil telah disetujui.");
-  } else {
-    Alert.alert("Gagal", "Terjadi kesalahan saat menyetujui data.");
-  }
-};
-
-const handleDelete = async (item, setDataAmilPending, setSelectedItem) => {
-  const isDeleted = await deletePendingAccount(item.id);
-  if (isDeleted) {
-    setDataAmilPending((prevData) =>
-      prevData.filter((amil) => amil.id !== item.id)
-    );
-    setSelectedItem(null);
-    Alert.alert("Berhasil", "Data amil telah dihapus.");
-  } else {
-    Alert.alert("Gagal", "Terjadi kesalahan saat menghapus data.");
-  }
-};
-
-// **Komponen**
 const ApprovalAmil = () => {
   const [dataAmilPending, setDataAmilPending] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
-  // **Fungsi Update Header**
-  const updateHeaderButtons = useCallback(() => {
-    if (selectedItem) {
-      navigation.setOptions({
-        headerRight: () => (
-          <>
-            <TouchableOpacity
-              onPress={() =>
-                approveDataAmil(
-                  selectedItem,
-                  setDataAmilPending,
-                  setSelectedItem
-                )
-              }
-            >
-              <Text style={styles.headerButton}>Approve</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                handleDelete(selectedItem, setDataAmilPending, setSelectedItem)
-              }
-            >
-              <Text style={styles.headerButton}>Hapus</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setSelectedItem(null)}>
-              <Text style={styles.headerButton}>Batal</Text>
-            </TouchableOpacity>
-          </>
-        ),
-      });
-    } else {
-      navigation.setOptions({ headerRight: null });
-    }
-  }, [navigation, selectedItem]);
+  // Use the useFocusEffect hook to refresh the data when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const pendingData = await fetchPendingAccounts();
+        setDataAmilPending(pendingData);
+      };
 
-  // **Efek Samping**
-  useEffect(() => {
-    const fetchData = async () => {
-      const pendingData = await fetchPendingAccounts();
-      setDataAmilPending(pendingData);
-    };
+      fetchData();
+    }, [])
+  );
 
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    updateHeaderButtons();
-  }, [selectedItem, updateHeaderButtons]);
-
-  // **Render Item**
   const renderItem = useCallback(
     ({ item }) => (
       <TouchableOpacity
@@ -156,14 +91,16 @@ const ApprovalAmil = () => {
           styles.item,
           selectedItem?.id === item.id ? styles.selectedItem : null,
         ]}
-        onPress={() => setSelectedItem(item)}
+        onPress={() =>
+          navigation.navigate("DetailAmilPending", { dataAmil: item })
+        } // Navigasi ke detail
       >
         <Text style={styles.itemText}>
           {item.nama} - {item.email}
         </Text>
       </TouchableOpacity>
     ),
-    [selectedItem]
+    [navigation, selectedItem]
   );
 
   return (
@@ -174,11 +111,36 @@ const ApprovalAmil = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
+
+      {selectedItem && (
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Detail Data Amil</Text>
+              <Text style={styles.modalText}>Nama: {selectedItem.nama}</Text>
+              <Text style={styles.modalText}>Email: {selectedItem.email}</Text>
+              <Text style={styles.modalText}>
+                Telepon: {selectedItem.telepon || "Tidak tersedia"}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>Tutup</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
 
-// **Gaya**
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -205,11 +167,38 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
   },
-  headerButton: {
-    marginHorizontal: 10,
-    fontSize: 16,
-    color: "blue",
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
     fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "blue",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

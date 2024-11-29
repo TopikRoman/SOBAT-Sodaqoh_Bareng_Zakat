@@ -12,19 +12,21 @@ import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { auth } from "../../firebase/FirebaseConfig";
 
 const DaftarAmil = ({ navigation }) => {
+  const [nama, setNama] = useState(""); // State untuk nama
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const db = getFirestore(); // Inisialisasi Firestore
 
   const handleSignUp = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Email dan Password harus diisi.");
+    if (!nama || !email || !password) {
+      Alert.alert("Error", "Nama, Email, dan Password harus diisi.");
       return;
     }
 
     try {
       const docRef = await addDoc(collection(db, "pendingAccounts"), {
+        nama: nama, // Tambahkan nama ke Firestore
         email: email,
         password: password,
         approved: false,
@@ -50,6 +52,12 @@ const DaftarAmil = ({ navigation }) => {
     >
       <View style={styles.container}>
         <Text style={styles.title}>Daftar Amil</Text>
+        <TextInput
+          style={styles.Input}
+          placeholder="Nama"
+          value={nama}
+          onChangeText={setNama}
+        />
         <TextInput
           style={styles.Input}
           placeholder="Email"
@@ -87,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: 300,
-    height: 400,
+    height: 450, // Tinggi disesuaikan
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

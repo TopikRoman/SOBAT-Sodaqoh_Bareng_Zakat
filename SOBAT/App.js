@@ -3,7 +3,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/LoginScreen";
-import MainMenu from "./screens/screenAmil/MainMenu";
+import MainMenu from "./screens/screenAmil/MainMenuAmil";
 import TambahPembayaran from "./screens/DataPembayaran/MenambahDataPembayaran";
 import MelihatPembayaran from "./screens/DataPembayaran/MelihatPembayaran";
 import DetailPembayaran from "./screens/DataPembayaran/DetailPembayaran";
@@ -12,8 +12,6 @@ import DataMustahik from "./screens/DataMustahik/DataMustahik";
 import TambahMustahik from "./screens/DataMustahik/TambahDataMustahik";
 import DetailMustahik from "./screens/DataMustahik/DetailMustahik";
 import EditDataMustahik from "./screens/DataMustahik/EditDataMustahik";
-import MainMenuAmil from "./screens/ScreenMuzakki/MainMenuMuzakki";
-import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 import DaftarAmil from "./screens/DaftarAkun/DaftarAmil";
 import DaftarMuzakki from "./screens/DaftarAkun/DaftarMuzakki";
 import LoginAmil from "./screens/SeparateLogin/LoginAmil";
@@ -24,6 +22,7 @@ import MainMenuMuzakki from "./screens/ScreenMuzakki/MainMenuMuzakki";
 import TambahPembagianZakat from "./screens/PembagianZakat/TambahPembagianZakat";
 import DataPembagianZakat from "./screens/PembagianZakat/DataPembagian";
 import DetailPembagian from "./screens/PembagianZakat/DetailPembagian";
+import DetailAmilPending from "./screens/screenAmil/DetailAmilPending";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +41,7 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="TambahPembayaran" component={TambahPembayaran} />
+        <Stack.Screen name="DetailAmilPending" component={DetailAmilPending} />
         <Stack.Screen name="DetailPembayaran" component={DetailPembayaran} />
         <Stack.Screen name="DataMustahik" component={DataMustahik} />
         <Stack.Screen name="TambahDataMustahik" component={TambahMustahik} />

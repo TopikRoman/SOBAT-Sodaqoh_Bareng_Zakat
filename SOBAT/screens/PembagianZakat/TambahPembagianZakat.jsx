@@ -11,25 +11,20 @@ import { Picker } from "@react-native-picker/picker";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Helper untuk mendapatkan tanggal hari ini
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
-// Hook untuk mendapatkan UID pengguna yang sedang login
 const useAmilUid = () => {
   const auth = getAuth();
   const [amilUid, setAmilUid] = useState("");
 
   useEffect(() => {
     const currentUser = auth.currentUser;
-    if (currentUser) {
-      setAmilUid(currentUser.uid);
-    }
+    if (currentUser) setAmilUid(currentUser.uid);
   }, [auth]);
 
   return amilUid;
 };
 
-// Hook untuk mendapatkan data Mustahik dari Firestore
 const useMustahikList = () => {
   const [mustahikList, setMustahikList] = useState([]);
   const db = getFirestore();
@@ -39,13 +34,13 @@ const useMustahikList = () => {
       try {
         const mustahikRef = collection(db, "mustahik");
         const mustahikSnapshot = await getDocs(mustahikRef);
-        const mustahikData = mustahikSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMustahikList(mustahikData);
-      } catch (error) {
-        console.error("Error fetching mustahik data: ", error);
+        setMustahikList(
+          mustahikSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      } catch {
         Alert.alert("Error", "Gagal mengambil data mustahik.");
       }
     };
@@ -56,7 +51,6 @@ const useMustahikList = () => {
   return mustahikList;
 };
 
-// Fungsi murni untuk menambah pembagian zakat
 const tambahPembagianZakat = async (
   amilUid,
   mustahik,
@@ -64,48 +58,30 @@ const tambahPembagianZakat = async (
   bentukZakat,
   db
 ) => {
-  if (!amilUid || !mustahik || !nominal || !bentukZakat) {
-    throw new Error("Semua data harus diisi.");
-  }
-
   const pembagianZakatRef = collection(db, "pembagianZakat");
   await addDoc(pembagianZakatRef, {
-    amilUid, // UID Amil
-    mustahik, // Semua data Mustahik (nama, kategori, dll.)
-    nominal: parseInt(nominal), // Nominal zakat
-    bentukZakat, // Jenis zakat (Beras, Uang, Emas)
-    tanggal: getTodayDate(), // Tanggal hari ini
+    amilUid,
+    mustahik,
+    nominal: parseInt(nominal),
+    bentukZakat,
+    tanggal: getTodayDate(),
   });
 };
 
-// Fungsi untuk membuat item picker dari daftar mustahik
-const createPickerItems = (mustahikList) => {
-  return mustahikList.map((mustahik) => (
-    <Picker.Item
-      key={mustahik.id}
-      label={`${mustahik.nama} - ${mustahik.kategori}`}
-      value={mustahik.id}
-    />
-  ));
-};
-
-// Custom hook untuk mengelola state form
 const useFormState = (initialState) => {
   const [formData, setFormData] = useState(initialState);
 
-  const handleInputChange = (name, value) => {
+  const handleInputChange = (name, value) =>
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  };
 
   const resetForm = () => setFormData(initialState);
 
   return { formData, handleInputChange, resetForm };
 };
 
-// Komponen picker untuk kategori dan status
 const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   <>
     <Text style={styles.label}>{label}</Text>
@@ -123,7 +99,7 @@ const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   </>
 );
 
-const TambahPembagianZakat = ({ route, navigation }) => {
+const TambahPembagianZakat = ({ route }) => {
   const { userEmail } = route.params;
   const amilUid = useAmilUid();
   const mustahikList = useMustahikList();
@@ -154,20 +130,21 @@ const TambahPembagianZakat = ({ route, navigation }) => {
     )
       .then(() => {
         Alert.alert("Sukses!", "Data pembagian zakat berhasil ditambahkan.");
-        // Reset form setelah data berhasil disimpan
         resetForm();
       })
-      .catch((error) => {
-        console.error("Error adding zakat record: ", error);
-        Alert.alert(
-          "Error",
-          error.message || "Gagal menambahkan data pembagian zakat."
-        );
+      .catch(() => {
+        Alert.alert("Error", "Gagal menambahkan data pembagian zakat.");
       });
   }, [amilUid, formData, mustahikList, db, resetForm]);
 
   const pickerItemsMustahik = useMemo(
-    () => createPickerItems(mustahikList),
+    () => [
+      { label: "Pilih nama mustahik", value: null },
+      ...mustahikList.map((mustahik) => ({
+        label: `${mustahik.nama} - ${mustahik.kategori}`,
+        value: mustahik.id,
+      })),
+    ],
     [mustahikList]
   );
 
@@ -175,30 +152,25 @@ const TambahPembagianZakat = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Form Pembagian Zakat</Text>
 
-      {/* Picker untuk Nama Mustahik */}
       <PickerField
         label="Pilih Nama Mustahik"
         selectedValue={formData.selectedMustahik}
         onValueChange={(value) => handleInputChange("selectedMustahik", value)}
-        items={mustahikList.map((mustahik) => ({
-          label: `${mustahik.nama} - ${mustahik.kategori}`,
-          value: mustahik.id,
-        }))}
+        items={pickerItemsMustahik}
       />
 
-      {/* Picker untuk Jenis Zakat */}
       <PickerField
         label="Pilih Jenis Zakat"
         selectedValue={formData.bentukZakat}
         onValueChange={(value) => handleInputChange("bentukZakat", value)}
         items={[
+          { label: "Pilih jenis zakat", value: null },
           { label: "Beras", value: "Beras" },
           { label: "Uang", value: "Uang" },
           { label: "Emas", value: "Emas" },
         ]}
       />
 
-      {/* Input untuk Nominal Zakat */}
       <TextInput
         style={styles.input}
         placeholder="Nominal Zakat"
@@ -207,7 +179,6 @@ const TambahPembagianZakat = ({ route, navigation }) => {
         onChangeText={(value) => handleInputChange("nominal", value)}
       />
 
-      {/* Tombol untuk Menambah Pembagian Zakat */}
       <TouchableOpacity
         style={styles.button}
         onPress={handleTambahPembagianZakat}
@@ -234,7 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
-    marginTop: 5,
   },
   pickerContainer: {
     height: 50,
@@ -242,9 +212,6 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 50,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 10,
     backgroundColor: "#fff",
   },
   input: {
@@ -261,7 +228,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 10,
   },
   buttonText: {
     color: "#fff",
