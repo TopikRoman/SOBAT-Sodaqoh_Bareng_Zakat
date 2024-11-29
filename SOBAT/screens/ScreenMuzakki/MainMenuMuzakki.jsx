@@ -38,7 +38,8 @@ export default function MainMenuMuzakki({ route, navigation }) {
       {/* Icon Section */}
       <View style={styles.containerIcon}>
           <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconContainer} 
+            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}>
               <Image source={require("../../assets/iconZakat.png")} style={styles.icon} />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Zakat</Text>
@@ -87,26 +88,26 @@ const styles = StyleSheet.create({
   containerProfile: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 10,
+    marginLeft: 5,
     marginBottom: 20,
     marginLeft: 30,
   },
   iconProfile: {
-    width: 80,
-    height: 80,
+    width: 40,
+    height: 40,
     borderRadius: 50,
     backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
   },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 40,
+    height: 40,
     borderRadius: 50,
   },
   userName: {
-    marginLeft: 20,
-    fontSize: 20,
+    marginLeft: 5,
+    fontSize: 15,
     fontWeight: "bold",
     color: "black",
   },
@@ -127,20 +128,20 @@ const styles = StyleSheet.create({
   },
   textMarhaban: {
     fontWeight: "normal",
-    fontSize: 15,
+    fontSize: 10,
     color: "white",
   },
   textZakat: {
     fontWeight: "bold",
-    fontSize: 25,
+    fontSize: 20,
     color: "white",
-    marginVertical: 10,
+    marginVertical: 5,
   },
   buttonBayar: {
     backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 10,
-    width: 150,
+    width: 120,
     alignItems: "center",
     marginTop: 20,
   },
@@ -149,8 +150,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   zakatImage: {
-    width: 225,
-    height: 175,
+    width: 175,
+    height: 150,
     marginLeft: 20,
     resizeMode: "contain", 
   },
@@ -170,12 +171,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,  
   },
   icon: {
-    width: 100,  
-    height: 100,  
+    width: 65,  
+    height: 65,  
     resizeMode: "contain",  
   },
   iconLabel: {
-    fontSize: 20,  
+    fontSize: 15,  
     color: "#333",  
     fontWeight: "bold",
   },
@@ -185,8 +186,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "gray",
     marginTop: 20,
-    width: 540,
-    height: 250,
+    width: 400,
+    height: 175,
     borderRadius: 15,
     marginLeft: 30,
   },

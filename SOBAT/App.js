@@ -23,6 +23,7 @@ import TambahPembagianZakat from "./screens/PembagianZakat/TambahPembagianZakat"
 import DataPembagianZakat from "./screens/PembagianZakat/DataPembagian";
 import DetailPembagian from "./screens/PembagianZakat/DetailPembagian";
 import DetailAmilPending from "./screens/screenAmil/DetailAmilPending";
+import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 
 const Stack = createNativeStackNavigator();
 
