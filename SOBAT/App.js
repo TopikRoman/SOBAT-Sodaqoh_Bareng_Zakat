@@ -49,7 +49,7 @@ export default function App() {
         <Stack.Screen name="DetailApproveAmil" component={DetailApproveAmil} />
         <Stack.Screen name="DetailDataMustahik" component={DetailMustahik} />
         <Stack.Screen name="EditDataMustahik" component={EditDataMustahik} />
-        <Stack.Screen name="MainMenuMuzakki" component={MainMenuMuzakki} />
+        <Stack.Screen name="MainMenuMuzakki" component={MainMenuMuzakki} options={{ headerShown: false }}/>
         <Stack.Screen name="DetailPembagian" component={DetailPembagian} />
         <Stack.Screen
           name="DataPembagianZakat"
@@ -86,6 +86,10 @@ export default function App() {
         <Stack.Screen
           name="DataPembayaranZakat"
           component={MelihatPembayaran}
+        />
+        <Stack.Screen
+          name="TransaksiZakatMuzakki"
+          component={TransaksiZakatMuzakki}
         />
       </Stack.Navigator>
     </NavigationContainer>

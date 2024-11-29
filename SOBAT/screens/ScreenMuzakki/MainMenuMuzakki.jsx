@@ -1,31 +1,77 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-export default function MainMenuMuzakki({ navigation }) {
+export default function MainMenuMuzakki({ route, navigation }) {
+  const { userEmail } = route.params;
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dashboard Amil Zakat</Text>
+      {/* Profil User - di pojok kiri */}
+      <View style={styles.containerProfile}>
+        <View style={styles.iconProfile}>
+          <Image
+            source={require("../../assets/User_Icon.png")}
+            style={styles.profileImage}
+          />
+        </View>
+        <Text style={styles.userName}>{userEmail}</Text>
+      </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("TransaksiZakatMuzakki")}
-      >
-        <Text style={styles.buttonText}>Pembayaran Zakat</Text>
-      </TouchableOpacity>
+      {/* Bayar Zakat Section */}
+      <View style={styles.containerBayar}>
+        <View style={styles.leftContent}>
+          <Text style={styles.textMarhaban}>Marhaban Ya Ramadhan</Text>
+          <Text style={styles.textZakat}>Yuk Bayar Zakat</Text>
+          <TouchableOpacity
+            style={styles.buttonBayar}
+            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}
+          >
+            <Text style={styles.buttonText}>Bayar</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("")}
-      >
-        <Text style={styles.buttonText}>Data Transaksi</Text>
-      </TouchableOpacity>
+        {/* Gambar Zakat di kanan */}
+        <Image
+          source={require("../../assets/GambarZakat.png")}
+          style={styles.zakatImage}
+        />
+      </View>
+      {/* Icon Section */}
+      <View style={styles.containerIcon}>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconZakat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Zakat</Text>
+          </View>
 
-      <TouchableOpacity
-        style={styles.buttonExit}
-        onPress={() => console.log("Exit App")}
-      >
-        <Text style={styles.buttonText}>Exit</Text>
-      </TouchableOpacity>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconRiwayat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Riwayat</Text>
+          </View>
+
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconNiat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Niat</Text>
+          </View>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconPenerima.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Penerima</Text>
+          </View>
+      </View>
+
+      {/* Artikel Section */}
+      <View style={styles.containerArtikel}>
+        <Text style={{fontWeight: "bold", fontSize: 20, color: "white"}}>Artikel akan segera datang!</Text>
+      </View>
+      <View style={styles.containerArtikel}>
+        <Text style={{fontWeight: "bold", fontSize: 20, color: "white"}}>Artikel akan segera datang!</Text>
+      </View>
     </View>
   );
 }
@@ -33,33 +79,115 @@ export default function MainMenuMuzakki({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    backgroundColor: "#f5f5f5",
+    paddingTop: 20,
+  },
+  containerProfile: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10,
+    marginBottom: 20,
+    marginLeft: 30,
+  },
+  iconProfile: {
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+    backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
-  title: {
-    fontSize: 24,
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+  },
+  userName: {
+    marginLeft: 20,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "black",
   },
-  button: {
+  containerBayar: {
+    marginLeft: 30,
+    width: "90%",
+    padding: 20,
+    backgroundColor: "#A2BA44",
+    borderRadius: 10,
+    flexDirection: "row",  
+    alignItems: "center",  
+    justifyContent: "space-between",  
+  },
+  leftContent: {
+    flexDirection: "column",  
+    justifyContent: "flex-start",
+    alignItems: "flex-start",  
+  },
+  textMarhaban: {
+    fontWeight: "normal",
+    fontSize: 15,
+    color: "white",
+  },
+  textZakat: {
+    fontWeight: "bold",
+    fontSize: 25,
+    color: "white",
+    marginVertical: 10,
+  },
+  buttonBayar: {
     backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
+    width: 150,
     alignItems: "center",
-  },
-  buttonExit: {
-    backgroundColor: "#FF3B30",
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
-    alignItems: "center",
+    marginTop: 20,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  zakatImage: {
+    width: 225,
+    height: 175,
+    marginLeft: 20,
+    resizeMode: "contain", 
+  },
+  containerIcon: {
+    marginLeft: 30,
+    flexDirection: "row",  
+    justifyContent: "space-around",  
+    alignItems: "center",  
+    marginTop: 20,  
+    gap: 45,
+  },
+  iconWithText: {
+    flexDirection: "column",  
+    alignItems: "center",  
+  },
+  iconContainer: {
+    marginBottom: 5,  
+  },
+  icon: {
+    width: 100,  
+    height: 100,  
+    resizeMode: "contain",  
+  },
+  iconLabel: {
+    fontSize: 20,  
+    color: "#333",  
+    fontWeight: "bold",
+  },
+
+  containerArtikel: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "gray",
+    marginTop: 20,
+    width: 540,
+    height: 250,
+    borderRadius: 15,
+    marginLeft: 30,
   },
 });
