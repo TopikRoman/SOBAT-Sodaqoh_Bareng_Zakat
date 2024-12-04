@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 const MenuButton = ({ title, onPress, style = styles.button }) => (
   <TouchableOpacity style={style} onPress={onPress}>
@@ -19,36 +19,100 @@ const MainMenu = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dashboard Amil Zakat</Text>
-      <Text style={styles.userInfo}>Logged in as: {userEmail}</Text>
-
-      <MenuButton
-        title="Data Pembayaran Zakat"
-        onPress={navigateTo("DataPembayaranZakat")}
-      />
-
-      {isAdmin && (
-        <MenuButton
-          title="Menerima Akun Amil"
-          onPress={navigateTo("ApproveAkunAmil")}
-        />
+      {/* Profil User - di pojok kiri */}
+      <View style={styles.containerProfile}>
+        <View style={styles.iconProfile}>
+          <Image
+            source={require("../../assets/User_Icon.png")}
+            style={styles.profileImage}
+          />
+        </View>
+        <Text style={styles.userName}>{userEmail}</Text>
+        {isAdmin && (
+        <>
+          <TouchableOpacity style={styles.ButtonKonfirmasiAmil} onPress={() => navigation.navigate("ApproveAkunAmil")}>
+            <Image
+              source={require("../../assets/IconAccAmil.png")}
+              style={{width: 130, height: 50,resizeMode: "contain"}}
+            />
+          </TouchableOpacity>
+        </>
       )}
+      </View>
 
-      <MenuButton title="Data Mustahik" onPress={navigateTo("DataMustahik")} />
-      <MenuButton
-        title="Konfirmasi Pembayaran"
-        onPress={navigateTo("KonfirmasiPembayaran")}
-      />
-      <MenuButton
-        title="Pembagian Zakat"
-        onPress={navigateTo("DataPembagianZakat", { userEmail: userEmail })}
-      />
+      {/* Bayar Zakat Section */}
+      <View style={styles.containerBayar}>
+        <View style={styles.leftContent}>
+          <Text style={styles.textMarhaban}>Marhaban Ya Ramadhan</Text>
+          <Text style={styles.textZakat}>Yuk Bayar Zakat</Text>
+          <TouchableOpacity
+            style={styles.buttonBayar}
+            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}
+          >
+            <Text style={styles.buttonText}>Bayar</Text>
+          </TouchableOpacity>
+        </View>
 
-      <MenuButton
-        title="Exit"
-        style={styles.buttonExit}
-        onPress={() => console.log("Exit App")}
-      />
+        {/* Gambar Zakat di kanan */}
+        <Image
+          source={require("../../assets/GambarZakat.png")}
+          style={styles.zakatImage}
+        />
+      </View>
+      {/* Icon Section kolom 1*/}
+      <View style={styles.containerIcon}>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer} 
+            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}>
+              <Image source={require("../../assets/iconZakat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Zakat</Text>
+          </View>
+
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconRiwayat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Riwayat</Text>
+          </View>
+
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <Image source={require("../../assets/iconNiat.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Niat</Text>
+          </View>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate("DataMustahik")}>
+              <Image source={require("../../assets/iconPenerima.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Penerima</Text>
+          </View>
+      </View>
+      {/* Icon Section kolom 2*/}
+      <View style={styles.containerIcon2}>
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer} 
+            onPress={() => navigation.navigate("DataPembayaranZakat")}>
+              <Image source={require("../../assets/IconPembayaran.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Data{"\n"}Pembayaran</Text>
+          </View>
+
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer} onPress={navigateTo("DataPembagianZakat", { userEmail: userEmail })}>
+              <Image source={require("../../assets/IkonPemberian.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Pembagian{"\n"}Zakat</Text>
+          </View>
+
+          <View style={styles.iconWithText}>
+            <TouchableOpacity style={styles.iconContainer} onPress={navigateTo("KonfirmasiPembayaran")}>
+              <Image source={require("../../assets/IconKonfirmasiBayar.png")} style={styles.icon} />
+            </TouchableOpacity>
+            <Text style={styles.iconLabel}>Konfirmasi{"\n"}Pembayaran</Text>
+          </View>
+      </View>
     </View>
   );
 };
@@ -56,39 +120,131 @@ const MainMenu = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    backgroundColor: "#f5f5f5",
+    paddingTop: 20,
+  },
+  containerProfile: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 5,
+    marginBottom: 20,
+    marginLeft: 30,
+  },
+  iconProfile: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
-  title: {
-    fontSize: 24,
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+  },
+  userName: {
+    marginLeft: 5,
+    fontSize: 15,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "black",
   },
-  userInfo: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 20,
+  containerBayar: {
+    marginLeft: 30,
+    width: "90%",
+    padding: 20,
+    backgroundColor: "#A2BA44",
+    borderRadius: 10,
+    flexDirection: "row",  
+    alignItems: "center",  
+    justifyContent: "space-between",  
   },
-  button: {
+  leftContent: {
+    flexDirection: "column",  
+    justifyContent: "flex-start",
+    alignItems: "flex-start",  
+  },
+  textMarhaban: {
+    fontWeight: "normal",
+    fontSize: 10,
+    color: "white",
+  },
+  textZakat: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: "white",
+    marginVertical: 5,
+  },
+  buttonBayar: {
     backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
+    width: 120,
     alignItems: "center",
-  },
-  buttonExit: {
-    backgroundColor: "#FF3B30",
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
-    alignItems: "center",
+    marginTop: 20,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  zakatImage: {
+    width: 175,
+    height: 150,
+    marginLeft: 20,
+    resizeMode: "contain", 
+  },
+  containerIcon: {
+    marginLeft: 30,
+    flexDirection: "row",  
+    justifyContent: "space-around",  
+    alignItems: "center",  
+    marginTop: 20,  
+    gap: 45,
+  },
+  containerIcon2: {
+    marginLeft: 50,
+    flexDirection: "row",  
+    justifyContent: "space-around",  
+    alignItems: "center",  
+    marginTop: 20,  
+    gap: 50,
+  },
+  iconWithText: {
+    flexDirection: "column",  
+    alignItems: "center",  
+  },
+  iconContainer: {
+    marginBottom: 5,  
+  },
+  icon: {
+    width: 65,  
+    height: 65,  
+    resizeMode: "contain",  
+  },
+  iconLabel: {
+    fontSize: 15,  
+    color: "#333",  
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  containerArtikel: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "gray",
+    marginTop: 20,
+    width: 400,
+    height: 175,
+    borderRadius: 15,
+    marginLeft: 30,
+  },
+  ButtonKonfirmasiAmil :{
+    marginLeft: 108,
+    width: 20,
+    height: 20,
+    marginBottom: 22,
   },
 });
 
