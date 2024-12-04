@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -102,9 +102,10 @@ const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   </>
 );
 
-const TransaksiZakatMuzakki = () => {
+const TransaksiZakatMuzakki = ({ route }) => {
+  const { userName } = route.params; // Ambil nama dari params
   const { formData, handleInputChange, resetForm } = useFormState({
-    nama: "",
+    nama: userName || "", // Mengisi nama dengan nilai yang dikirimkan dari MainMenu
     alamat: "",
     telepon: "",
     atasNama: "",

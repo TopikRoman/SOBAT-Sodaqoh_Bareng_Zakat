@@ -1,8 +1,47 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+} from "react-native";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 export default function MainMenuMuzakki({ route, navigation }) {
   const { userEmail } = route.params;
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const db = getFirestore();
+      const usersRef = collection(db, "akunMuzakki");
+      const q = query(usersRef, where("email", "==", userEmail));
+
+      try {
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const userData = querySnapshot.docs[0].data();
+          setUserName(userData.nama || "Pengguna"); // Default jika nama kosong
+        } else {
+          Alert.alert("Error", "Pengguna tidak ditemukan.");
+        }
+      } catch (error) {
+        console.error("Error fetching user name: ", error);
+        Alert.alert("Error", "Terjadi kesalahan saat mengambil data.");
+      }
+    };
+
+    fetchUserName();
+  }, [userEmail]);
+
   return (
     <View style={styles.container}>
       {/* Profil User - di pojok kiri */}
@@ -13,7 +52,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
             style={styles.profileImage}
           />
         </View>
-        <Text style={styles.userName}>{userEmail}</Text>
+        <Text style={styles.userName}>{userName}</Text>
       </View>
 
       {/* Bayar Zakat Section */}
@@ -23,12 +62,16 @@ export default function MainMenuMuzakki({ route, navigation }) {
           <Text style={styles.textZakat}>Yuk Bayar Zakat</Text>
           <TouchableOpacity
             style={styles.buttonBayar}
-            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}
+            onPress={() =>
+              navigation.navigate("TransaksiZakatMuzakki", {
+                userName: userName, // Mengirimkan nama pengguna
+                userEmail: userEmail,
+              })
+            }
           >
             <Text style={styles.buttonText}>Bayar</Text>
           </TouchableOpacity>
         </View>
-
         {/* Gambar Zakat di kanan */}
         <Image
           source={require("../../assets/GambarZakat.png")}
@@ -37,45 +80,70 @@ export default function MainMenuMuzakki({ route, navigation }) {
       </View>
       {/* Icon Section */}
       <View style={styles.containerIcon}>
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer} 
-            onPress={() => navigation.navigate("TransaksiZakatMuzakki")}>
-              <Image source={require("../../assets/iconZakat.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Zakat</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() =>
+              navigation.navigate("TransaksiZakatMuzakki", {
+                userName: userName, // Mengirimkan nama pengguna
+                userEmail: userEmail,
+              })
+            }
+          >
+            <Image
+              source={require("../../assets/iconZakat.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Zakat</Text>
+        </View>
 
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer}>
-              <Image source={require("../../assets/iconRiwayat.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Riwayat</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity style={styles.iconContainer}>
+            <Image
+              source={require("../../assets/iconRiwayat.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Riwayat</Text>
+        </View>
 
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer}>
-              <Image source={require("../../assets/iconNiat.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Niat</Text>
-          </View>
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer}>
-              <Image source={require("../../assets/iconPenerima.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Penerima</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity style={styles.iconContainer}>
+            <Image
+              source={require("../../assets/iconNiat.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Niat</Text>
+        </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity style={styles.iconContainer}>
+            <Image
+              source={require("../../assets/iconPenerima.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Penerima</Text>
+        </View>
       </View>
 
       {/* Artikel Section */}
       <View style={styles.containerArtikel}>
-        <Text style={{fontWeight: "bold", fontSize: 20, color: "white"}}>Artikel akan segera datang!</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 20, color: "white" }}>
+          Artikel akan segera datang!
+        </Text>
       </View>
       <View style={styles.containerArtikel}>
-        <Text style={{fontWeight: "bold", fontSize: 20, color: "white"}}>Artikel akan segera datang!</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 20, color: "white" }}>
+          Artikel akan segera datang!
+        </Text>
       </View>
     </View>
   );
 }
+
+// Styles tetap sama dengan yang sudah dibuat
 
 const styles = StyleSheet.create({
   container: {
@@ -117,14 +185,14 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#A2BA44",
     borderRadius: 10,
-    flexDirection: "row",  
-    alignItems: "center",  
-    justifyContent: "space-between",  
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   leftContent: {
-    flexDirection: "column",  
+    flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "flex-start",  
+    alignItems: "flex-start",
   },
   textMarhaban: {
     fontWeight: "normal",
@@ -153,31 +221,31 @@ const styles = StyleSheet.create({
     width: 175,
     height: 150,
     marginLeft: 20,
-    resizeMode: "contain", 
+    resizeMode: "contain",
   },
   containerIcon: {
     marginLeft: 30,
-    flexDirection: "row",  
-    justifyContent: "space-around",  
-    alignItems: "center",  
-    marginTop: 20,  
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginTop: 20,
     gap: 45,
   },
   iconWithText: {
-    flexDirection: "column",  
-    alignItems: "center",  
+    flexDirection: "column",
+    alignItems: "center",
   },
   iconContainer: {
-    marginBottom: 5,  
+    marginBottom: 5,
   },
   icon: {
-    width: 65,  
-    height: 65,  
-    resizeMode: "contain",  
+    width: 65,
+    height: 65,
+    resizeMode: "contain",
   },
   iconLabel: {
-    fontSize: 15,  
-    color: "#333",  
+    fontSize: 15,
+    color: "#333",
     fontWeight: "bold",
   },
 
