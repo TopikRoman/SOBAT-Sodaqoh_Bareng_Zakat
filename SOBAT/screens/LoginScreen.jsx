@@ -6,7 +6,7 @@ const LoginScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Image
         source={require("../assets/Logo_SOBAT.png")}
-        style={{ width: 200, height: 200 }}
+        style={{ width: 200, height: 200, resizeMode: "contain" }}
       />
       <Text style={{ margin: 30, fontWeight: "bold", fontSize: 15 }}>
         Sodaqoh Bareng Zakat
