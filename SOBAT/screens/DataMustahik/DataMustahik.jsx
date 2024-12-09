@@ -6,12 +6,13 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Image,
 } from "react-native";
 import { getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-// Fungsi untuk membaca data dari Firebase
+
 const membacaDataMustahik = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "mustahik"));
@@ -26,7 +27,7 @@ const membacaDataMustahik = async () => {
   }
 };
 
-// Fungsi untuk menghapus data dari Firebase
+
 const hapusDataMustahik = async (id) => {
   try {
     await deleteDoc(doc(db, "mustahik", id));
@@ -37,85 +38,48 @@ const hapusDataMustahik = async (id) => {
   }
 };
 
-// Fungsi untuk menangani aksi hapus
-const handleDelete = async (selectedItem, setDataMustahik, setSelectedItem) => {
-  Alert.alert(
-    "Konfirmasi Hapus",
-    "Apakah Anda yakin ingin menghapus data mustahik ini?",
-    [
-      {
-        text: "Batal",
-        onPress: () => {
-          setSelectedItem(null);
-        },
-        style: "cancel",
-      },
-      {
-        text: "Hapus",
-        onPress: async () => {
-          const berhasil = await hapusDataMustahik(selectedItem.id);
-          if (berhasil) {
-            setDataMustahik((prevData) =>
-              prevData.filter((item) => item.id !== selectedItem.id)
-            );
-            setSelectedItem(null);
-            Alert.alert("Berhasil", "Data mustahik telah dihapus.");
-          } else {
-            Alert.alert("Error", "Gagal menghapus data mustahik.");
-          }
-        },
-      },
-    ]
-  );
-};
-
 const DataMustahik = () => {
   const [dataMustahik, setDataMustahik] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
 
-  // Fetch data saat fokus
+  
   const fetchData = useCallback(async () => {
     const mustahikData = await membacaDataMustahik();
     setDataMustahik(mustahikData);
   }, []);
 
-  // Memperbarui tombol header untuk edit/hapus
-  const updateHeaderButtons = useCallback(() => {
-    if (selectedItem) {
-      navigation.setOptions({
-        headerRight: () => (
-          <>
-            <TouchableOpacity
-              onPress={() =>
-                handleDelete(selectedItem, setDataMustahik, setSelectedItem)
-              }
-            >
-              <Text style={styles.headerButton}>Hapus</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleEdit(selectedItem)}>
-              <Text style={styles.headerButton}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setSelectedItem(null)}>
-              <Text style={styles.headerButton}>Batal</Text>
-            </TouchableOpacity>
-          </>
-        ),
-      });
-    } else {
-      navigation.setOptions({ headerRight: null });
-    }
-  }, [navigation, selectedItem]);
-
-  // Menjalankan fetch data dan update header saat layar difokuskan
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      updateHeaderButtons();
-    }, [fetchData, updateHeaderButtons])
+    }, [fetchData])
   );
 
-  // Fungsi untuk menavigasi ke detail mustahik
+  const handleDelete = useCallback(async (item) => {
+    Alert.alert(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data mustahik ini?",
+      [
+        { text: "Batal", onPress: () => {}, style: "cancel" },
+        {
+          text: "Hapus",
+          onPress: async () => {
+            const berhasil = await hapusDataMustahik(item.id);
+            if (berhasil) {
+              setDataMustahik((prevData) =>
+                prevData.filter((data) => data.id !== item.id)
+              );
+              setSelectedItem(null);
+              Alert.alert("Berhasil", "Data mustahik telah dihapus.");
+            } else {
+              Alert.alert("Error", "Gagal menghapus data.");
+            }
+          },
+        },
+      ]
+    );
+  }, []);
+
   const handlePress = useCallback(
     (item) => {
       navigation.navigate("DetailDataMustahik", { mustahik: item });
@@ -123,29 +87,10 @@ const DataMustahik = () => {
     [navigation]
   );
 
-  // Menangani long press pada item
   const handleLongPress = useCallback((item) => {
     setSelectedItem(item);
   }, []);
 
-  // Fungsi untuk menavigasi ke halaman edit
-  const handleEdit = useCallback(
-    (selectedItem) => {
-      if (selectedItem) {
-        navigation.navigate("EditDataMustahik", { mustahik: selectedItem });
-        setSelectedItem(null);
-      }
-    },
-    [navigation]
-  );
-
-  // Fungsi untuk menavigasi ke halaman tambah mustahik
-  const handleAddItem = useCallback(
-    () => navigation.navigate("TambahDataMustahik"),
-    [navigation]
-  );
-
-  // Render item dalam FlatList
   const renderItem = useCallback(
     ({ item }) => (
       <TouchableOpacity
@@ -155,28 +100,65 @@ const DataMustahik = () => {
             ? styles.selectedItem
             : null,
         ]}
-        onPress={() => handlePress(item)}
+        onPress={() =>
+          selectedItem ? setSelectedItem(null) : handlePress(item)
+        }
         onLongPress={() => handleLongPress(item)}
       >
         <Text style={styles.itemText}>
           {item.nama} - {item.kategori} - {item.status}
         </Text>
+        {selectedItem && selectedItem.id === item.id && (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDelete(item)}
+            >
+              <Text style={styles.deleteButtonText}>Hapus</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() =>
+                navigation.navigate("EditDataMustahik", { mustahik: item })
+              }
+            >
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Text style={styles.cancelButtonText}>Batal</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </TouchableOpacity>
     ),
-    [selectedItem, handlePress, handleLongPress]
+    [selectedItem, handlePress, handleLongPress, handleDelete, navigation]
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Daftar Data Mustahik</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.leftColumn}>
+          <Text style={styles.header}>Daftar Data Mustahik</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate("TambahDataMustahik")}
+          >
+            <Text style={styles.addButtonText}>Tambah Data Baru</Text>
+          </TouchableOpacity>
+        </View>
+        <Image
+          source={require("../../assets/orangNgaji.png")}
+          style={styles.illustration}
+        />
+      </View>
       <FlatList
         data={dataMustahik}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
-      <TouchableOpacity style={styles.tombolTambah} onPress={handleAddItem}>
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -184,14 +166,42 @@ const DataMustahik = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
+  },
+  leftColumn: {
+    flex: 1,
+    marginRight: 10,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+    textAlign: "center",
+  },
+  addButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  addButtonText: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+  illustration: {
+    flex: 1,
+    height: 100,
+    resizeMode: "contain",
   },
   item: {
     padding: 15,
@@ -207,30 +217,40 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
   },
-  headerButton: {
-    color: "red",
-    marginRight: 15,
-    fontSize: 16,
+  actionButtons: {
+    flexDirection: "row",
+    marginTop: 10,
+    justifyContent: "space-between",
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: "#fff",
     fontWeight: "bold",
   },
-  tombolTambah: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    backgroundColor: "#4CAF50",
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
+  editButton: {
+    backgroundColor: "#FFA500",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
   },
-  fabText: {
-    fontSize: 48,
-    color: "white",
+  editButtonText: {
+    color: "#fff",
     fontWeight: "bold",
-    lineHeight: 55,
-    textAlign: "center",
+  },
+  cancelButton: {
+    backgroundColor: "gray",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 

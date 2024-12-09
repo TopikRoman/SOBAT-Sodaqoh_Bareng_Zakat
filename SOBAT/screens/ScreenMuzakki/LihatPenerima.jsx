@@ -4,7 +4,6 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
-
 const membacaDataMustahik = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "mustahik"));
@@ -12,10 +11,19 @@ const membacaDataMustahik = async () => {
       const data = doc.data();
 
       
-      const tanggal =
-        data.tahun && !isNaN(Date.parse(data.tahun))
-          ? new Date(data.tahun).toLocaleDateString("id-ID")
-          : "Tahun Tidak Valid";
+      let tanggal = "Tahun Tidak Valid";
+      if (data.tahun && typeof data.tahun === "string") {
+        const parts = data.tahun.split("/");
+        if (parts.length === 3) {
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1; 
+          const year = parseInt(parts[2], 10);
+          const parsedDate = new Date(year, month, day);
+          if (!isNaN(parsedDate.getTime())) {
+            tanggal = parsedDate.toLocaleDateString("id-ID");
+          }
+        }
+      }
 
       return {
         id: doc.id,
@@ -23,7 +31,7 @@ const membacaDataMustahik = async () => {
         kategori: data.kategori || "Kategori Tidak Diketahui",
         status: data.status || "Status Tidak Diketahui",
         alamat: data.alamat || "Alamat Tidak Diketahui",
-        tanggal, 
+        tanggal,
       };
     });
   } catch (error) {
@@ -35,20 +43,19 @@ const membacaDataMustahik = async () => {
 const MustahikView = () => {
   const [dataMustahik, setDataMustahik] = useState([]);
 
-  
+  // Fetch data saat layar difokuskan
   const fetchData = useCallback(async () => {
     const mustahikData = await membacaDataMustahik();
     setDataMustahik(mustahikData);
   }, []);
 
-  
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [fetchData])
   );
 
-  
+  // Render item dalam daftar
   const renderItem = useCallback(
     ({ item }) => (
       <View style={styles.item}>
