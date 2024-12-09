@@ -29,15 +29,18 @@ const MainMenu = ({ route, navigation }) => {
         </View>
         <Text style={styles.userName}>{userEmail}</Text>
         {isAdmin && (
-        <>
-          <TouchableOpacity style={styles.ButtonKonfirmasiAmil} onPress={() => navigation.navigate("ApproveAkunAmil")}>
-            <Image
-              source={require("../../assets/IconAccAmil.png")}
-              style={{width: 130, height: 50,resizeMode: "contain"}}
-            />
-          </TouchableOpacity>
-        </>
-      )}
+          <>
+            <TouchableOpacity
+              style={styles.ButtonKonfirmasiAmil}
+              onPress={() => navigation.navigate("ApproveAkunAmil")}
+            >
+              <Image
+                source={require("../../assets/IconAccAmil.png")}
+                style={{ width: 130, height: 50, resizeMode: "contain" }}
+              />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       {/* Bayar Zakat Section */}
@@ -45,9 +48,14 @@ const MainMenu = ({ route, navigation }) => {
         <View style={styles.leftContent}>
           <Text style={styles.textMarhaban}>Marhaban Ya Ramadhan</Text>
           <Text style={styles.textZakat}>Yuk Bayar Zakat</Text>
-          <TouchableOpacity style={styles.iconContainer2} 
-            onPress={() => navigation.navigate("")}>
-              <Image source={require("../../assets/IconNiatAmil.png")} style={{width: 150, height: 50, resizeMode: "contain"}} />
+          <TouchableOpacity
+            style={styles.iconContainer2}
+            onPress={() => navigation.navigate("")}
+          >
+            <Image
+              source={require("../../assets/IconNiatAmil.png")}
+              style={{ width: 150, height: 50, resizeMode: "contain" }}
+            />
           </TouchableOpacity>
         </View>
 
@@ -59,33 +67,56 @@ const MainMenu = ({ route, navigation }) => {
       </View>
       {/* Icon Section kolom 1*/}
       <View style={styles.containerIcon}>
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer} 
-            onPress={() => navigation.navigate("DataPembayaranZakat")}>
-              <Image source={require("../../assets/IconPembayaran.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Transaksi</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => navigation.navigate("DataPembayaranZakat")}
+          >
+            <Image
+              source={require("../../assets/IconPembayaran.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Transaksi</Text>
+        </View>
 
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer} onPress={navigateTo("DataPembagianZakat", { userEmail: userEmail })}>
-              <Image source={require("../../assets/IkonPemberian.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Penyaluran</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={navigateTo("DataPembagianZakat", { userEmail: userEmail })}
+          >
+            <Image
+              source={require("../../assets/IkonPemberian.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Penyaluran</Text>
+        </View>
 
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer} onPress={navigateTo("KonfirmasiPembayaran")}>
-              <Image source={require("../../assets/IconKonfirmasiBayar.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel2}>Setujui{"\n"}Transaksi</Text>
-          </View>
-          <View style={styles.iconWithText}>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate("DataMustahik")}>
-              <Image source={require("../../assets/iconPenerima.png")} style={styles.icon} />
-            </TouchableOpacity>
-            <Text style={styles.iconLabel}>Penerima</Text>
-          </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={navigateTo("KonfirmasiPembayaran")}
+          >
+            <Image
+              source={require("../../assets/IconKonfirmasiBayar.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel2}>Setujui{"\n"}Transaksi</Text>
+        </View>
+        <View style={styles.iconWithText}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => navigation.navigate("DataMustahik")}
+          >
+            <Image
+              source={require("../../assets/iconPenerima.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.iconLabel}>Penerima</Text>
+        </View>
       </View>
       {/* Artikel Section */}
       <View style={styles.containerArtikel}>
@@ -142,14 +173,14 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#A2BA44",
     borderRadius: 10,
-    flexDirection: "row",  
-    alignItems: "center",  
-    justifyContent: "space-between",  
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   leftContent: {
-    flexDirection: "column",  
+    flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "flex-start",  
+    alignItems: "flex-start",
   },
   textMarhaban: {
     fontWeight: "normal",
@@ -178,41 +209,41 @@ const styles = StyleSheet.create({
     width: 175,
     height: 150,
     marginLeft: 20,
-    resizeMode: "contain", 
+    resizeMode: "contain",
   },
   containerIcon: {
     marginLeft: 30,
-    flexDirection: "row",  
-    justifyContent: "space-around",  
-    alignItems: "center",  
-    marginTop: 20,  
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginTop: 20,
     gap: 45,
   },
   iconWithText: {
-    flexDirection: "column",  
-    alignItems: "center",  
+    flexDirection: "column",
+    alignItems: "center",
   },
   iconContainer: {
-    marginBottom: 5,  
+    marginBottom: 5,
   },
   iconContainer2: {
     marginBottom: 5,
-    marginTop: 15,  
+    marginTop: 15,
   },
   icon: {
-    width: 65,  
-    height: 65,  
-    resizeMode: "contain",  
+    width: 65,
+    height: 65,
+    resizeMode: "contain",
   },
   iconLabel: {
-    fontSize: 15,  
-    color: "#333",  
+    fontSize: 15,
+    color: "#333",
     fontWeight: "bold",
     textAlign: "center",
   },
   iconLabel2: {
-    fontSize: 9,  
-    color: "#333",  
+    fontSize: 9,
+    color: "#333",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -227,7 +258,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: 30,
   },
-  ButtonKonfirmasiAmil :{
+  ButtonKonfirmasiAmil: {
     marginLeft: 108,
     width: 20,
     height: 20,

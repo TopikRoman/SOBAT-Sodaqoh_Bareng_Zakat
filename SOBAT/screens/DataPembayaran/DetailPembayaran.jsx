@@ -23,6 +23,9 @@ const DetailPembayaran = ({ route }) => {
           <Text style={styles.label}>
             Banyak Zakat: {pembayaran.banyakZakat}
           </Text>
+          <Text style={styles.label}>
+            Metode Pembayaran: {pembayaran.metodePembayaran}
+          </Text>
         </>
       ) : (
         <Text style={styles.errorMessage}>

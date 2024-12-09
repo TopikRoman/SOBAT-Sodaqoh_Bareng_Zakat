@@ -25,6 +25,8 @@ import DetailPembagian from "./screens/PembagianZakat/DetailPembagian";
 import DetailAmilPending from "./screens/screenAmil/DetailAmilPending";
 import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 import MustahikView from "./screens/ScreenMuzakki/LihatPenerima";
+import SetujuiTransaksi from "./screens/screenAmil/SetujuiTransaksi";
+import DetailPembayaranPending from "./screens/screenAmil/DetailPembayaranPending";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,13 +47,25 @@ export default function App() {
         <Stack.Screen name="TambahPembayaran" component={TambahPembayaran} />
         <Stack.Screen name="DetailAmilPending" component={DetailAmilPending} />
         <Stack.Screen name="DetailPembayaran" component={DetailPembayaran} />
+        <Stack.Screen
+          name="KonfirmasiPembayaran"
+          component={SetujuiTransaksi}
+        />
         <Stack.Screen name="DataMustahik" component={DataMustahik} />
         <Stack.Screen name="TambahDataMustahik" component={TambahMustahik} />
         <Stack.Screen name="ApproveAkunAmil" component={ApprovalAmil} />
         <Stack.Screen name="DetailApproveAmil" component={DetailApproveAmil} />
         <Stack.Screen name="DetailDataMustahik" component={DetailMustahik} />
+        <Stack.Screen
+          name="DetailPembayaranPending"
+          component={DetailPembayaranPending}
+        />
         <Stack.Screen name="EditDataMustahik" component={EditDataMustahik} />
-        <Stack.Screen name="MainMenuMuzakki" component={MainMenuMuzakki} options={{ headerShown: false }}/>
+        <Stack.Screen
+          name="MainMenuMuzakki"
+          component={MainMenuMuzakki}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="DetailPembagian" component={DetailPembagian} />
         <Stack.Screen
           name="DataPembagianZakat"
@@ -93,7 +107,11 @@ export default function App() {
           name="TransaksiZakatMuzakki"
           component={TransaksiZakatMuzakki}
         />
-        <Stack.Screen name="LihatPenerima" component={MustahikView} options={{ headerShown: false }}/>
+        <Stack.Screen
+          name="LihatPenerima"
+          component={MustahikView}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
