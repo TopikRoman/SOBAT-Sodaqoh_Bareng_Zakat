@@ -29,7 +29,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const userData = querySnapshot.docs[0].data();
-          setUserName(userData.nama || "Pengguna"); // Default jika nama kosong
+          setUserName(userData.nama || "Pengguna"); 
         } else {
           Alert.alert("Error", "Pengguna tidak ditemukan.");
         }
@@ -64,7 +64,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
             style={styles.buttonBayar}
             onPress={() =>
               navigation.navigate("TransaksiZakatMuzakki", {
-                userName: userName, // Mengirimkan nama pengguna
+                userName: userName, 
                 userEmail: userEmail,
               })
             }
@@ -85,7 +85,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
             style={styles.iconContainer}
             onPress={() =>
               navigation.navigate("TransaksiZakatMuzakki", {
-                userName: userName, // Mengirimkan nama pengguna
+                userName: userName, 
                 userEmail: userEmail,
               })
             }
@@ -118,12 +118,12 @@ export default function MainMenuMuzakki({ route, navigation }) {
           <Text style={styles.iconLabel}>Niat</Text>
         </View>
         <View style={styles.iconWithText}>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate("LihatPenerima") }>
             <Image
               source={require("../../assets/iconPenerima.png")}
               style={styles.icon}
             />
-          </TouchableOpacity>
+          </TouchableOpacity >
           <Text style={styles.iconLabel}>Penerima</Text>
         </View>
       </View>
@@ -142,8 +142,6 @@ export default function MainMenuMuzakki({ route, navigation }) {
     </View>
   );
 }
-
-// Styles tetap sama dengan yang sudah dibuat
 
 const styles = StyleSheet.create({
   container: {

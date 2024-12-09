@@ -24,6 +24,7 @@ import DataPembagianZakat from "./screens/PembagianZakat/DataPembagian";
 import DetailPembagian from "./screens/PembagianZakat/DetailPembagian";
 import DetailAmilPending from "./screens/screenAmil/DetailAmilPending";
 import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
+import MustahikView from "./screens/ScreenMuzakki/LihatPenerima";
 
 const Stack = createNativeStackNavigator();
 
@@ -92,6 +93,7 @@ export default function App() {
           name="TransaksiZakatMuzakki"
           component={TransaksiZakatMuzakki}
         />
+        <Stack.Screen name="LihatPenerima" component={MustahikView} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
