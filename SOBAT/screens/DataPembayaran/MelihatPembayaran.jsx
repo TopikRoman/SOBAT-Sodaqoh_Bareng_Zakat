@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   Alert,
+  Image,
 } from "react-native";
 import { getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
@@ -35,38 +36,6 @@ const hapusDataPembayaran = async (id) => {
   }
 };
 
-const handleDelete = async (
-  selectedItem,
-  setDataPembayaran,
-  setSelectedItem
-) => {
-  Alert.alert(
-    "Konfirmasi Hapus",
-    "Apakah Anda yakin ingin menghapus data pembayaran ini?",
-    [
-      {
-        text: "Batal",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Hapus",
-        onPress: async () => {
-          const berhasil = await hapusDataPembayaran(selectedItem.id);
-          if (berhasil) {
-            setDataPembayaran((prevData) =>
-              prevData.filter((item) => item.id !== selectedItem.id)
-            );
-            setSelectedItem(null);
-            Alert.alert("Berhasil", "Data pembayaran telah dihapus.");
-          } else {
-            Alert.alert("Error", "Gagal menghapus data pembayaran.");
-          }
-        },
-      },
-    ]
-  );
-};
 const MelihatPembayaran = () => {
   const [dataPembayaran, setDataPembayaran] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -77,96 +46,110 @@ const MelihatPembayaran = () => {
     setDataPembayaran(pembayaranData);
   }, []);
 
-  const updateHeaderButtons = useCallback(() => {
+  const handleDelete = async () => {
+    Alert.alert(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data pembayaran ini?",
+      [
+        {
+          text: "Batal",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Hapus",
+          onPress: async () => {
+            const berhasil = await hapusDataPembayaran(selectedItem.id);
+            if (berhasil) {
+              setDataPembayaran((prevData) =>
+                prevData.filter((item) => item.id !== selectedItem.id)
+              );
+              setSelectedItem(null);
+              Alert.alert("Berhasil", "Data pembayaran telah dihapus.");
+            } else {
+              Alert.alert("Error", "Gagal menghapus data pembayaran.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleEdit = () => {
     if (selectedItem) {
-      navigation.setOptions({
-        headerRight: () => (
-          <>
-            <TouchableOpacity
-              onPress={() =>
-                handleDelete(selectedItem, setDataPembayaran, setSelectedItem)
-              }
-            >
-              <Text style={styles.headerButton}>Delete</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleEdit(selectedItem)}>
-              <Text style={styles.headerButton}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setSelectedItem(null)}>
-              <Text style={styles.headerButton}>Batal</Text>
-            </TouchableOpacity>
-          </>
-        ),
-      });
-    } else {
-      navigation.setOptions({ headerRight: null });
+      navigation.navigate("EditDataPembayaran", { pembayaran: selectedItem });
+      setSelectedItem(null);
     }
-  }, [navigation, selectedItem]);
+  };
+
+  const handleAddItem = () => {
+    navigation.navigate("TambahPembayaran");
+  };
+
+  const handlePress = (item) => {
+    navigation.navigate("DetailPembayaran", { pembayaran: item });
+  };
+
+  const handleLongPress = (item) => {
+    setSelectedItem(item);
+  };
 
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      updateHeaderButtons();
-    }, [fetchData, updateHeaderButtons])
+    }, [fetchData])
   );
 
-  const handlePress = useCallback(
-    (item) => {
-      navigation.navigate("DetailPembayaran", { pembayaran: item });
-    },
-    [navigation]
-  );
-
-  const handleLongPress = useCallback((item) => {
-    setSelectedItem(item);
-  }, []);
-
-  const handleEdit = useCallback(
-    (selectedItem) => {
-      if (selectedItem) {
-        navigation.navigate("EditDataPembayaran", { pembayaran: selectedItem });
-        setSelectedItem(null);
-      }
-    },
-    [navigation]
-  );
-
-  const handleAddItem = useCallback(
-    () => navigation.navigate("TambahPembayaran"),
-    [navigation]
-  );
-
-  const renderItem = useCallback(
-    ({ item }) => (
-      <TouchableOpacity
-        style={[
-          styles.item,
-          selectedItem && selectedItem.id === item.id
-            ? styles.selectedItem
-            : null,
-        ]}
-        onPress={() => handlePress(item)}
-        onLongPress={() => handleLongPress(item)}
-      >
-        <Text style={styles.itemText}>
-          {item.nama} - {item.jenisZakat} - {item.tanggal}
-        </Text>
-      </TouchableOpacity>
-    ),
-    [selectedItem, handlePress, handleLongPress]
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.item,
+        selectedItem && selectedItem.id === item.id ? styles.selectedItem : null,
+      ]}
+      onPress={() => (selectedItem ? setSelectedItem(null) : handlePress(item))}
+      onLongPress={() => handleLongPress(item)}
+    >
+      <Text style={styles.itemText}>
+        {item.nama} - {item.jenisZakat} - {item.tanggal}
+      </Text>
+      {selectedItem && selectedItem.id === item.id && (
+        <View style={styles.actionButtons}>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <Text style={styles.deleteButtonText}>Hapus</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+            <Text style={styles.editButtonText}>Edit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => setSelectedItem(null)}
+          >
+            <Text style={styles.cancelButtonText}>Batal</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Daftar Pembayaran Zakat</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.leftColumn}>
+          <Text style={styles.header}>Daftar Pembayaran Zakat</Text>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+            <Text style={styles.addButtonText}>Tambah Data Baru</Text>
+          </TouchableOpacity>
+        </View>
+        <Image
+          source={require("../../assets/orangNgaji.png")}
+          style={styles.illustration}
+        />
+      </View>
       <FlatList
         data={dataPembayaran}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
-      <TouchableOpacity style={styles.tombolTambah} onPress={handleAddItem}>
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -174,14 +157,42 @@ const MelihatPembayaran = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
+  },
+  leftColumn: {
+    flex: 1,
+    marginRight: 10,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+    textAlign: "center",
+  },
+  addButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  addButtonText: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+  illustration: {
+    flex: 1,
+    height: 100,
+    resizeMode: "contain",
   },
   item: {
     padding: 15,
@@ -197,30 +208,40 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
   },
-  headerButton: {
-    color: "red",
-    marginRight: 15,
-    fontSize: 16,
+  actionButtons: {
+    flexDirection: "row",
+    marginTop: 10,
+    justifyContent: "space-between",
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: "#fff",
     fontWeight: "bold",
   },
-  tombolTambah: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    backgroundColor: "#4CAF50",
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
+  editButton: {
+    backgroundColor: "#FFA500",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
   },
-  fabText: {
-    fontSize: 48,
-    color: "white",
+  editButtonText: {
+    color: "#fff",
     fontWeight: "bold",
-    lineHeight: 55,
-    textAlign: "center",
+  },
+  cancelButton: {
+    backgroundColor: "gray",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
