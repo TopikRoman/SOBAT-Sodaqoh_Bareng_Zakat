@@ -27,6 +27,8 @@ import TransaksiZakatMuzakki from "./screens/ScreenMuzakki/TransaksiZakat";
 import MustahikView from "./screens/ScreenMuzakki/LihatPenerima";
 import SetujuiTransaksi from "./screens/screenAmil/SetujuiTransaksi";
 import DetailPembayaranPending from "./screens/screenAmil/DetailPembayaranPending";
+import RiwayatPembayaran from "./screens/ScreenMuzakki/RiwayatPembayaran";
+import NiatZakatScreen from "./screens/ScreenMuzakki/NiatZakatScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +49,8 @@ export default function App() {
         <Stack.Screen name="TambahPembayaran" component={TambahPembayaran} />
         <Stack.Screen name="DetailAmilPending" component={DetailAmilPending} />
         <Stack.Screen name="DetailPembayaran" component={DetailPembayaran} />
+        <Stack.Screen name="RiwayatPembayaran" component={RiwayatPembayaran} />
+        <Stack.Screen name="NiatZakatScreen" component={NiatZakatScreen} />
         <Stack.Screen
           name="KonfirmasiPembayaran"
           component={SetujuiTransaksi}
@@ -107,11 +111,7 @@ export default function App() {
           name="TransaksiZakatMuzakki"
           component={TransaksiZakatMuzakki}
         />
-        <Stack.Screen
-          name="LihatPenerima"
-          component={MustahikView}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="LihatPenerima" component={MustahikView} />
       </Stack.Navigator>
     </NavigationContainer>
   );

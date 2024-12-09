@@ -50,7 +50,7 @@ const MainMenu = ({ route, navigation }) => {
           <Text style={styles.textZakat}>Yuk Bayar Zakat</Text>
           <TouchableOpacity
             style={styles.iconContainer2}
-            onPress={() => navigation.navigate("")}
+            onPress={() => navigation.navigate("NiatZakatScreen")}
           >
             <Image
               source={require("../../assets/IconNiatAmil.png")}

@@ -29,7 +29,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const userData = querySnapshot.docs[0].data();
-          setUserName(userData.nama || "Pengguna"); 
+          setUserName(userData.nama || "Pengguna");
         } else {
           Alert.alert("Error", "Pengguna tidak ditemukan.");
         }
@@ -64,7 +64,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
             style={styles.buttonBayar}
             onPress={() =>
               navigation.navigate("TransaksiZakatMuzakki", {
-                userName: userName, 
+                userName: userName,
                 userEmail: userEmail,
               })
             }
@@ -85,7 +85,7 @@ export default function MainMenuMuzakki({ route, navigation }) {
             style={styles.iconContainer}
             onPress={() =>
               navigation.navigate("TransaksiZakatMuzakki", {
-                userName: userName, 
+                userName: userName,
                 userEmail: userEmail,
               })
             }
@@ -99,7 +99,12 @@ export default function MainMenuMuzakki({ route, navigation }) {
         </View>
 
         <View style={styles.iconWithText}>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() =>
+              navigation.navigate("RiwayatPembayaran", { userName: userName })
+            }
+          >
             <Image
               source={require("../../assets/iconRiwayat.png")}
               style={styles.icon}
@@ -109,7 +114,10 @@ export default function MainMenuMuzakki({ route, navigation }) {
         </View>
 
         <View style={styles.iconWithText}>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => navigation.navigate("NiatZakatScreen")}
+          >
             <Image
               source={require("../../assets/iconNiat.png")}
               style={styles.icon}
@@ -118,12 +126,15 @@ export default function MainMenuMuzakki({ route, navigation }) {
           <Text style={styles.iconLabel}>Niat</Text>
         </View>
         <View style={styles.iconWithText}>
-          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate("LihatPenerima") }>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => navigation.navigate("LihatPenerima")}
+          >
             <Image
               source={require("../../assets/iconPenerima.png")}
               style={styles.icon}
             />
-          </TouchableOpacity >
+          </TouchableOpacity>
           <Text style={styles.iconLabel}>Penerima</Text>
         </View>
       </View>
