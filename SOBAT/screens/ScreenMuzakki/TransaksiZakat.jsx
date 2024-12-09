@@ -13,7 +13,8 @@ import { collection, addDoc } from "firebase/firestore";
 
 const simpanDataKeFirestore = async (newData) => {
   try {
-    await addDoc(collection(db, "pembayaranZakatNonFix"), newData);
+    // Menyimpan data ke koleksi pembayaranPending
+    await addDoc(collection(db, "pembayaranPending"), newData);
     return {
       success: true,
       message: "Data pembayaran zakat berhasil disimpan",
@@ -26,6 +27,7 @@ const simpanDataKeFirestore = async (newData) => {
 
 const periksaInput = (data) => {
   return (
+    data.email && // Menambahkan pengecekan untuk email
     data.nama &&
     data.alamat &&
     data.telepon &&
@@ -62,7 +64,7 @@ const menyimpanDatadiFirestore = async (data) => {
     return {
       success: false,
       message:
-        "Semua kolom harus diisi! Pastikan nama, jenis zakat, nominal, dan metode pembayaran tidak kosong.",
+        "Semua kolom harus diisi! Pastikan email, nama, jenis zakat, nominal, dan metode pembayaran tidak kosong.",
     };
   }
 
@@ -103,8 +105,9 @@ const PickerField = ({ label, selectedValue, onValueChange, items }) => (
 );
 
 const TransaksiZakatMuzakki = ({ route }) => {
-  const { userName } = route.params; // Ambil nama dari params
+  const { userName, userEmail } = route.params; // Ambil email dan nama dari params
   const { formData, handleInputChange, resetForm } = useFormState({
+    email: userEmail || "", // Mengisi email dengan nilai yang dikirimkan dari MainMenu
     nama: userName || "", // Mengisi nama dengan nilai yang dikirimkan dari MainMenu
     alamat: "",
     telepon: "",
