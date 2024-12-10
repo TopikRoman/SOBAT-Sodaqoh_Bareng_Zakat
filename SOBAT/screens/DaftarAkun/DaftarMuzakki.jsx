@@ -8,8 +8,8 @@ import {
   ImageBackground,
   Alert,
 } from "react-native";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/FirebaseConfig";
 
 const DaftarMuzakki = ({ navigation }) => {
@@ -31,7 +31,6 @@ const DaftarMuzakki = ({ navigation }) => {
       );
       const userId = userCredential.user.uid;
 
-      // Simpan data ke Firestore
       await setDoc(doc(db, "akunMuzakki", userId), {
         nama,
         email,

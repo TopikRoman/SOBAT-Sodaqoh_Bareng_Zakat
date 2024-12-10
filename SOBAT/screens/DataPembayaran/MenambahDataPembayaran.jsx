@@ -53,7 +53,7 @@ const useFormState = (initialState) => {
 
 const buatDataPembayaran = (data) => ({
   ...data,
-  metodePembayaran: "Tunai", // Menambahkan properti metodePembayaran
+  metodePembayaran: "Tunai",
   tanggal: new Date().toISOString(),
 });
 

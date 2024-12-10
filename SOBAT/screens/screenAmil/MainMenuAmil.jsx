@@ -1,12 +1,6 @@
 import React, { useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-const MenuButton = ({ title, onPress, style = styles.button }) => (
-  <TouchableOpacity style={style} onPress={onPress}>
-    <Text style={styles.buttonText}>{title}</Text>
-  </TouchableOpacity>
-);
-
 const MainMenu = ({ route, navigation }) => {
   const { userEmail } = route.params;
 

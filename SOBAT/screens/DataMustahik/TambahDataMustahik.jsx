@@ -11,7 +11,6 @@ import { Picker } from "@react-native-picker/picker";
 import { db } from "../../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 
-// Fungsi untuk menyimpan data ke Firestore
 const simpanDataKeFirestore = async (newData) => {
   try {
     await addDoc(collection(db, "mustahik"), newData);
@@ -25,7 +24,6 @@ const simpanDataKeFirestore = async (newData) => {
   }
 };
 
-// Fungsi untuk memeriksa apakah input sudah lengkap
 const periksaInput = (data) => {
   return (
     data.nama &&
@@ -37,7 +35,6 @@ const periksaInput = (data) => {
   );
 };
 
-// Custom hook untuk mengelola state form
 const useFormState = (initialState) => {
   const [formData, setFormData] = useState(initialState);
 
@@ -53,12 +50,10 @@ const useFormState = (initialState) => {
   return { formData, handleInputChange, resetForm };
 };
 
-// Fungsi untuk membuat data mustahik lengkap dengan tanggal
 const buatDataMustahik = (data) => ({
   ...data,
 });
 
-// Fungsi untuk menyimpan data setelah pemeriksaan
 const menyimpanDataMustahik = async (data) => {
   if (!periksaInput(data)) {
     return {
@@ -72,7 +67,6 @@ const menyimpanDataMustahik = async (data) => {
   return await simpanDataKeFirestore(newData);
 };
 
-// Komponen input field yang dapat digunakan kembali
 const InputField = ({
   placeholder,
   value,
@@ -88,7 +82,6 @@ const InputField = ({
   />
 );
 
-// Komponen picker untuk kategori dan status
 const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   <>
     <Text style={styles.label}>{label}</Text>

@@ -13,7 +13,6 @@ import { collection, addDoc } from "firebase/firestore";
 
 const simpanDataKeFirestore = async (newData) => {
   try {
-    // Menyimpan data ke koleksi pembayaranPending
     await addDoc(collection(db, "pembayaranPending"), newData);
     return {
       success: true,
@@ -27,7 +26,7 @@ const simpanDataKeFirestore = async (newData) => {
 
 const periksaInput = (data) => {
   return (
-    data.email && // Menambahkan pengecekan untuk email
+    data.email &&
     data.nama &&
     data.alamat &&
     data.telepon &&

@@ -17,7 +17,6 @@ import DaftarMuzakki from "./screens/DaftarAkun/DaftarMuzakki";
 import LoginAmil from "./screens/SeparateLogin/LoginAmil";
 import LoginMuzakki from "./screens/SeparateLogin/LoginMuzakki";
 import ApprovalAmil from "./screens/screenAmil/dataAmilPending";
-import DetailApproveAmil from "./screens/screenAmil/detailApproveAmil";
 import MainMenuMuzakki from "./screens/ScreenMuzakki/MainMenuMuzakki";
 import TambahPembagianZakat from "./screens/PembagianZakat/TambahPembagianZakat";
 import DataPembagianZakat from "./screens/PembagianZakat/DataPembagian";
@@ -58,7 +57,6 @@ export default function App() {
         <Stack.Screen name="DataMustahik" component={DataMustahik} />
         <Stack.Screen name="TambahDataMustahik" component={TambahMustahik} />
         <Stack.Screen name="ApproveAkunAmil" component={ApprovalAmil} />
-        <Stack.Screen name="DetailApproveAmil" component={DetailApproveAmil} />
         <Stack.Screen name="DetailDataMustahik" component={DetailMustahik} />
         <Stack.Screen
           name="DetailPembayaranPending"

@@ -8,7 +8,6 @@ import {
   getDocs,
 } from "firebase/firestore";
 
-// Fungsi untuk memformat tanggal
 const formatDate = (date) => {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
   const formattedDate = new Date(date).toLocaleDateString("id-ID", options);
@@ -51,7 +50,6 @@ export default function RiwayatPembayaran({ route }) {
             <View style={styles.item}>
               <Text style={styles.itemText}>
                 Tanggal: {formatDate(item.tanggal)}{" "}
-                {/* Menampilkan tanggal dengan format */}
               </Text>
               <Text style={styles.itemText}>
                 Bentuk Zakat: {item.bentukZakat}
@@ -61,7 +59,7 @@ export default function RiwayatPembayaran({ route }) {
               </Text>
             </View>
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(index) => index.toString()}
         />
       ) : (
         <Text style={styles.noData}>Belum ada riwayat pembayaran.</Text>

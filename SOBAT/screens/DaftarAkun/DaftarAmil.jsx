@@ -9,14 +9,13 @@ import {
   Alert,
 } from "react-native";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { auth } from "../../firebase/FirebaseConfig";
 
 const DaftarAmil = ({ navigation }) => {
-  const [nama, setNama] = useState(""); // State untuk nama
+  const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const db = getFirestore(); // Inisialisasi Firestore
+  const db = getFirestore();
 
   const handleSignUp = async () => {
     if (!nama || !email || !password) {
@@ -26,7 +25,7 @@ const DaftarAmil = ({ navigation }) => {
 
     try {
       const docRef = await addDoc(collection(db, "pendingAccounts"), {
-        nama: nama, // Tambahkan nama ke Firestore
+        nama: nama,
         email: email,
         password: password,
         approved: false,

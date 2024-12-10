@@ -62,14 +62,6 @@ const DetailAmilPending = () => {
         <Text style={styles.detailItem}>
           <Text style={styles.label}>Email:</Text> {dataAmil.email}
         </Text>
-        <Text style={styles.detailItem}>
-          <Text style={styles.label}>Nomor Telepon:</Text>{" "}
-          {dataAmil.telepon || "Tidak tersedia"}
-        </Text>
-        <Text style={styles.detailItem}>
-          <Text style={styles.label}>Alamat:</Text>{" "}
-          {dataAmil.alamat || "Tidak tersedia"}
-        </Text>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
 const DetailPembagian = () => {
-  // Mengambil parameter yang dikirim dari halaman DataPembagianZakat
   const route = useRoute();
   const { pembagianZakat } = route.params;
 
@@ -11,7 +10,6 @@ const DetailPembagian = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Detail Pembagian Zakat</Text>
 
-      {/* Kotak Data Muzakki */}
       <View style={styles.box}>
         <Text style={styles.boxTitle}>Data Muzakki</Text>
         <Text style={styles.label}>Nama: </Text>
@@ -30,7 +28,6 @@ const DetailPembagian = () => {
         <Text style={styles.value}>{pembagianZakat.mustahik.status}</Text>
       </View>
 
-      {/* Kotak Data Pembagian Zakat */}
       <View style={styles.box}>
         <Text style={styles.boxTitle}>Data Pembagian Zakat</Text>
         <Text style={styles.label}>Bentuk Zakat: </Text>

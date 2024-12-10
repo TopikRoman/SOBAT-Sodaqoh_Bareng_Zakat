@@ -44,7 +44,6 @@ export default function MainMenuMuzakki({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Profil User - di pojok kiri */}
       <View style={styles.containerProfile}>
         <View style={styles.iconProfile}>
           <Image
@@ -55,7 +54,6 @@ export default function MainMenuMuzakki({ route, navigation }) {
         <Text style={styles.userName}>{userName}</Text>
       </View>
 
-      {/* Bayar Zakat Section */}
       <View style={styles.containerBayar}>
         <View style={styles.leftContent}>
           <Text style={styles.textMarhaban}>Marhaban Ya Ramadhan</Text>
@@ -72,13 +70,11 @@ export default function MainMenuMuzakki({ route, navigation }) {
             <Text style={styles.buttonText}>Bayar</Text>
           </TouchableOpacity>
         </View>
-        {/* Gambar Zakat di kanan */}
         <Image
           source={require("../../assets/GambarZakat.png")}
           style={styles.zakatImage}
         />
       </View>
-      {/* Icon Section */}
       <View style={styles.containerIcon}>
         <View style={styles.iconWithText}>
           <TouchableOpacity

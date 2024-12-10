@@ -15,9 +15,8 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/FirebaseConfig";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import { useFocusEffect } from "@react-navigation/native";
 
 const fetchPendingAccounts = async () => {
   try {
@@ -29,16 +28,6 @@ const fetchPendingAccounts = async () => {
   } catch (error) {
     console.error("Error fetching pending accounts:", error);
     return [];
-  }
-};
-
-const deletePendingAccount = async (id) => {
-  try {
-    await deleteDoc(doc(db, "pendingAccounts", id));
-    return true;
-  } catch (error) {
-    console.error("Error deleting pending account:", error);
-    return false;
   }
 };
 
@@ -86,32 +75,6 @@ const ApprovalAmil = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
-
-      {selectedItem && (
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Detail Data Amil</Text>
-              <Text style={styles.modalText}>Nama: {selectedItem.nama}</Text>
-              <Text style={styles.modalText}>Email: {selectedItem.email}</Text>
-              <Text style={styles.modalText}>
-                Telepon: {selectedItem.telepon || "Tidak tersedia"}
-              </Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Tutup</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
     </View>
   );
 };

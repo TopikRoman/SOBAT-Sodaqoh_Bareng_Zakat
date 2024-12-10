@@ -41,7 +41,6 @@ const DataPembagianZakat = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
 
-  // Fetch data saat layar difokuskan
   const fetchData = useCallback(async () => {
     const pembagianZakatData = await membacaDataPembagianZakat();
     setDataPembagianZakat(pembagianZakatData);
@@ -53,7 +52,6 @@ const DataPembagianZakat = () => {
     }, [fetchData])
   );
 
-  // Fungsi untuk menghapus data
   const handleDelete = useCallback(async (item) => {
     Alert.alert(
       "Konfirmasi Hapus",
@@ -79,7 +77,6 @@ const DataPembagianZakat = () => {
     );
   }, []);
 
-  // Fungsi untuk menavigasi ke halaman detail pembagian zakat
   const handlePress = useCallback(
     (item) => {
       navigation.navigate("DetailPembagian", { pembagianZakat: item });
