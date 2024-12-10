@@ -42,37 +42,12 @@ const deletePendingAccount = async (id) => {
   }
 };
 
-const approvePendingAccount = async (account) => {
-  const auth = getAuth();
-  const { email, password, ...restData } = account;
-
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const { uid } = userCredential.user;
-
-    await setDoc(doc(db, "dataAmilApproved", uid), { uid, email, ...restData });
-
-    const isDeleted = await deletePendingAccount(account.id);
-    return isDeleted
-      ? { success: true, accountId: account.id }
-      : { success: false };
-  } catch (error) {
-    console.error("Error approving account:", error);
-    return { success: false };
-  }
-};
-
 const ApprovalAmil = () => {
   const [dataAmilPending, setDataAmilPending] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
-  // Use the useFocusEffect hook to refresh the data when the screen is focused
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -93,7 +68,7 @@ const ApprovalAmil = () => {
         ]}
         onPress={() =>
           navigation.navigate("DetailAmilPending", { dataAmil: item })
-        } // Navigasi ke detail
+        }
       >
         <Text style={styles.itemText}>
           {item.nama} - {item.email}

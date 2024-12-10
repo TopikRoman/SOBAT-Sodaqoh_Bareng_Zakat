@@ -8,14 +8,13 @@ import { db } from "../../firebase/FirebaseConfig";
 const DetailAmilPending = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { dataAmil } = route.params; // Data akun amil yang dipilih
+  const { dataAmil } = route.params;
 
   const handleConfirm = async () => {
     const auth = getAuth();
     const { id, email, password, ...restData } = dataAmil;
 
     try {
-      // Buat akun autentikasi
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -23,14 +22,12 @@ const DetailAmilPending = () => {
       );
       const { uid } = userCredential.user;
 
-      // Simpan ke Firestore (koleksi dataAmilApproved)
       await setDoc(doc(db, "dataAmilApproved", uid), {
         uid,
         email,
         ...restData,
       });
 
-      // Hapus dari pendingAccounts
       await deleteDoc(doc(db, "pendingAccounts", id));
 
       Alert.alert("Berhasil", "Akun amil telah dikonfirmasi.");
@@ -45,7 +42,6 @@ const DetailAmilPending = () => {
     const { id } = dataAmil;
 
     try {
-      // Hapus dari pendingAccounts
       await deleteDoc(doc(db, "pendingAccounts", id));
 
       Alert.alert("Berhasil", "Akun amil telah dihapus.");

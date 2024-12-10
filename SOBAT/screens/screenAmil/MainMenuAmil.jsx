@@ -19,7 +19,6 @@ const MainMenu = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Profil User - di pojok kiri */}
       <View style={styles.containerProfile}>
         <View style={styles.iconProfile}>
           <Image
@@ -43,7 +42,6 @@ const MainMenu = ({ route, navigation }) => {
         )}
       </View>
 
-      {/* Bayar Zakat Section */}
       <View style={styles.containerBayar}>
         <View style={styles.leftContent}>
           <Text style={styles.textMarhaban}>Marhaban Ya Ramadhan</Text>
@@ -59,13 +57,11 @@ const MainMenu = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Gambar Zakat di kanan */}
         <Image
           source={require("../../assets/GambarZakat.png")}
           style={styles.zakatImage}
         />
       </View>
-      {/* Icon Section kolom 1*/}
       <View style={styles.containerIcon}>
         <View style={styles.iconWithText}>
           <TouchableOpacity
@@ -118,7 +114,6 @@ const MainMenu = ({ route, navigation }) => {
           <Text style={styles.iconLabel}>Penerima</Text>
         </View>
       </View>
-      {/* Artikel Section */}
       <View style={styles.containerArtikel}>
         <Text style={{ fontWeight: "bold", fontSize: 20, color: "white" }}>
           Artikel akan segera datang!
