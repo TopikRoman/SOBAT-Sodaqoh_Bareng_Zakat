@@ -28,6 +28,9 @@ import SetujuiTransaksi from "./screens/screenAmil/SetujuiTransaksi";
 import DetailPembayaranPending from "./screens/screenAmil/DetailPembayaranPending";
 import RiwayatPembayaran from "./screens/ScreenMuzakki/RiwayatPembayaran";
 import NiatZakatScreen from "./screens/ScreenMuzakki/NiatZakatScreen";
+import TransaksiPembayaranBRI from "./screens/ScreenMuzakki/PembayaranTransaksiBRI";
+import TransaksiPembayaranQRIS from "./screens/ScreenMuzakki/PembayaranTransaksiQris";
+import TransaksiPembayaranDana from "./screens/ScreenMuzakki/PembayaranTransaksiDANA";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +53,18 @@ export default function App() {
         <Stack.Screen name="DetailPembayaran" component={DetailPembayaran} />
         <Stack.Screen name="RiwayatPembayaran" component={RiwayatPembayaran} />
         <Stack.Screen name="NiatZakatScreen" component={NiatZakatScreen} />
+        <Stack.Screen
+          name="TransaksiPembayaranQRIS"
+          component={TransaksiPembayaranQRIS}
+        />
+        <Stack.Screen
+          name="TransaksiPembayaranDana"
+          component={TransaksiPembayaranDana}
+        />
+        <Stack.Screen
+          name="TransaksiPembayaranBRI"
+          component={TransaksiPembayaranBRI}
+        />
         <Stack.Screen
           name="KonfirmasiPembayaran"
           component={SetujuiTransaksi}

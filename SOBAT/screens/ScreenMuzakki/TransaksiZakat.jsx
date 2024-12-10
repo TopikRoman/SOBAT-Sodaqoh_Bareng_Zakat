@@ -10,7 +10,9 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { db } from "../../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native"; // Tambahkan import useNavigation
 
+// Fungsi untuk menyimpan data ke Firestore
 const simpanDataKeFirestore = async (newData) => {
   try {
     await addDoc(collection(db, "pembayaranPending"), newData);
@@ -24,6 +26,7 @@ const simpanDataKeFirestore = async (newData) => {
   }
 };
 
+// Fungsi untuk memeriksa input
 const periksaInput = (data) => {
   return (
     data.email &&
@@ -38,6 +41,7 @@ const periksaInput = (data) => {
   );
 };
 
+// Hook untuk mengelola state formulir
 const useFormState = (initialState) => {
   const [formData, setFormData] = useState(initialState);
 
@@ -53,11 +57,13 @@ const useFormState = (initialState) => {
   return { formData, handleInputChange, resetForm };
 };
 
+// Fungsi untuk membuat data pembayaran
 const buatDataPembayaran = (data) => ({
   ...data,
   tanggal: new Date().toISOString(),
 });
 
+// Fungsi untuk menyimpan data ke Firestore dengan validasi input
 const menyimpanDatadiFirestore = async (data) => {
   if (!periksaInput(data)) {
     return {
@@ -71,6 +77,7 @@ const menyimpanDatadiFirestore = async (data) => {
   return await simpanDataKeFirestore(newData);
 };
 
+// Komponen Input Field
 const InputField = ({
   placeholder,
   value,
@@ -86,6 +93,7 @@ const InputField = ({
   />
 );
 
+// Komponen Picker
 const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   <>
     <Text style={styles.label}>{label}</Text>
@@ -103,11 +111,12 @@ const PickerField = ({ label, selectedValue, onValueChange, items }) => (
   </>
 );
 
+// Komponen Form Pembayaran Zakat
 const TransaksiZakatMuzakki = ({ route }) => {
-  const { userName, userEmail } = route.params; // Ambil email dan nama dari params
+  const { userName, userEmail } = route.params;
   const { formData, handleInputChange, resetForm } = useFormState({
-    email: userEmail || "", // Mengisi email dengan nilai yang dikirimkan dari MainMenu
-    nama: userName || "", // Mengisi nama dengan nilai yang dikirimkan dari MainMenu
+    email: userEmail || "",
+    nama: userName || "",
     alamat: "",
     telepon: "",
     atasNama: "",
@@ -117,12 +126,34 @@ const TransaksiZakatMuzakki = ({ route }) => {
     metodePembayaran: "qris",
   });
 
+  const navigation = useNavigation(); // Inisialisasi navigation
+
   const handleSubmit = async () => {
     const result = await menyimpanDatadiFirestore(formData);
     alert(result.message);
 
     if (result.success) {
-      resetForm();
+      // Jika metode pembayaran adalah BRI, arahkan ke halaman PembayaranTransaksiBRI
+      if (formData.metodePembayaran === "transfer_bri") {
+        navigation.navigate("PembayaranTransaksiBRI", {
+          banyakZakat: formData.banyakZakat,
+        });
+        resetForm();
+      } else if (formData.metodePembayaran === "dana") {
+        navigation.navigate("TransaksiPembayaranDana", {
+          banyakZakat: formData.banyakZakat,
+        });
+        resetForm();
+      }
+      // Jika metode pembayaran adalah QRIS, navigasikan ke halaman TransaksiPembayaranQRIS
+      else if (formData.metodePembayaran === "qris") {
+        navigation.navigate("TransaksiPembayaranQRIS", {
+          banyakZakat: formData.banyakZakat,
+        });
+        resetForm();
+      } else {
+        resetForm();
+      }
     }
   };
 
@@ -170,11 +201,7 @@ const TransaksiZakatMuzakki = ({ route }) => {
           label="Bentuk Zakat"
           selectedValue={formData.bentukZakat}
           onValueChange={(value) => handleInputChange("bentukZakat", value)}
-          items={[
-            { label: "Beras", value: "beras" },
-            { label: "Uang", value: "uang" },
-            { label: "Emas", value: "emas" },
-          ]}
+          items={[{ label: "Uang", value: "uang" }]}
         />
 
         <InputField
