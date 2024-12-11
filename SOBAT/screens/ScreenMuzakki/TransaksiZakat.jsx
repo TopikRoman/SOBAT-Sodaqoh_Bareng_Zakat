@@ -121,7 +121,7 @@ const TransaksiZakatMuzakki = ({ route }) => {
     telepon: "",
     atasNama: "",
     jenisZakat: "fitrah",
-    bentukZakat: "beras",
+    bentukZakat: "",
     banyakZakat: "",
     metodePembayaran: "qris",
   });
